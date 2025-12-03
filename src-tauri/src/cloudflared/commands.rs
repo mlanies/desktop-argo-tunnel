@@ -1,13 +1,29 @@
 use tauri::command;
 use std::process::Command;
 use serde::{Serialize, Deserialize};
+use std::sync::Mutex;
+use std::collections::HashMap;
+use tauri::State;
+
+// Store for active child processes
+pub struct TunnelState {
+    pub processes: Mutex<HashMap<String, u32>>, // Map ID to PID
+}
+
+impl TunnelState {
+    pub fn new() -> Self {
+        Self {
+            processes: Mutex::new(HashMap::new()),
+        }
+    }
+}
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Tunnel {
+pub struct ActiveTunnel {
     pub id: String,
-    pub name: String,
-    pub created_at: String,
-    pub connections: Vec<String>,
+    pub hostname: String,
+    pub local_port: u16,
+    pub pid: u32,
 }
 
 #[command]
@@ -25,60 +41,62 @@ pub async fn check_cloudflared_version() -> Result<String, String> {
 }
 
 #[command]
-pub async fn create_tunnel(name: String) -> Result<String, String> {
-    let output = Command::new("cloudflared")
-        .args(&["tunnel", "create", &name])
-        .output()
+pub async fn start_tcp_tunnel(
+    state: State<'_, TunnelState>,
+    hostname: String,
+    local_port: u16,
+) -> Result<ActiveTunnel, String> {
+    // cloudflared access tcp --hostname <hostname> --url localhost:<port>
+    let child = Command::new("cloudflared")
+        .args(&[
+            "access",
+            "tcp",
+            "--hostname",
+            &hostname,
+            "--url",
+            &format!("localhost:{}", local_port),
+        ])
+        .spawn()
         .map_err(|e| e.to_string())?;
 
-    if output.status.success() {
-        Ok(String::from_utf8_lossy(&output.stdout).to_string())
+    let pid = child.id();
+    let id = format!("{}-{}", hostname, local_port);
+
+    state.processes.lock().unwrap().insert(id.clone(), pid);
+
+    Ok(ActiveTunnel {
+        id,
+        hostname,
+        local_port,
+        pid,
+    })
+}
+
+#[command]
+pub async fn stop_tcp_tunnel(
+    state: State<'_, TunnelState>,
+    id: String,
+) -> Result<String, String> {
+    let mut processes = state.processes.lock().unwrap();
+    
+    if let Some(pid) = processes.remove(&id) {
+        // Kill the process
+        // Note: This is a simple kill. In a real app, we might want to be more graceful or handle cross-platform differences better.
+        // On Unix, Command::new("kill").arg(pid.to_string())...
+        // On Windows, taskkill...
+        
+        #[cfg(target_os = "windows")]
+        let _ = Command::new("taskkill")
+            .args(&["/F", "/PID", &pid.to_string()])
+            .output();
+
+        #[cfg(not(target_os = "windows"))]
+        let _ = Command::new("kill")
+            .arg(pid.to_string())
+            .output();
+            
+        Ok(format!("Tunnel {} stopped", id))
     } else {
-        Err(String::from_utf8_lossy(&output.stderr).to_string())
+        Err(format!("Tunnel {} not found", id))
     }
-}
-
-#[command]
-pub async fn list_tunnels() -> Result<Vec<Tunnel>, String> {
-    let output = Command::new("cloudflared")
-        .args(&["tunnel", "list", "--output", "json"])
-        .output()
-        .map_err(|e| e.to_string())?;
-
-    if output.status.success() {
-        // Parse JSON output from cloudflared
-        // Note: This is a simplified implementation. Actual parsing depends on cloudflared JSON structure
-        // For now, we'll return an empty list or mock data if parsing fails to avoid breaking
-        Ok(vec![]) 
-    } else {
-        Err(String::from_utf8_lossy(&output.stderr).to_string())
-    }
-}
-
-#[command]
-pub async fn delete_tunnel(id: String) -> Result<String, String> {
-    let output = Command::new("cloudflared")
-        .args(&["tunnel", "delete", &id])
-        .output()
-        .map_err(|e| e.to_string())?;
-
-    if output.status.success() {
-        Ok(String::from_utf8_lossy(&output.stdout).to_string())
-    } else {
-        Err(String::from_utf8_lossy(&output.stderr).to_string())
-    }
-}
-
-#[command]
-pub async fn start_tunnel(id: String) -> Result<String, String> {
-    // Starting a tunnel is a long-running process.
-    // In a real app, we'd spawn a child process and manage it.
-    // For this MVP, we'll just return a success message to simulate start.
-    Ok(format!("Tunnel {} started", id))
-}
-
-#[command]
-pub async fn stop_tunnel(id: String) -> Result<String, String> {
-    // Logic to kill the child process associated with the tunnel ID
-    Ok(format!("Tunnel {} stopped", id))
 }

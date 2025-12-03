@@ -45,9 +45,9 @@ export default function Sidebar() {
         />
         <NavItem 
           icon={<Network size={18} />} 
-          label={t('nav.tunnels')} 
-          active={activeTab === 'tunnels'}
-          onClick={() => setActiveTab('tunnels')}
+          label={t('nav.activeConnections')} 
+          active={activeTab === 'active-connections'}
+          onClick={() => setActiveTab('active-connections')}
           badge={activeTunnelsCount > 0 ? activeTunnelsCount : undefined}
         />
         <NavItem 

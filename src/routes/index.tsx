@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import Sidebar from "../components/Navigation/Sidebar";
 import Header from "../components/Header/Header";
 import Dashboard from "../components/Dashboard/Dashboard";
-import TunnelsList from "../components/Tunnels/TunnelsList";
+import ActiveConnections from "../components/Tunnels/ActiveConnections";
 import Settings from "../components/Settings/Settings";
 import ServerManagement from "../components/Servers/ServerManagement";
 import { useStore } from "../store";
@@ -17,8 +17,8 @@ function Index() {
   // Render different views based on active tab
   const renderView = () => {
     switch (activeTab) {
-      case 'tunnels':
-        return <TunnelsList />;
+      case 'active-connections':
+        return <ActiveConnections />;
       case 'servers':
         return <ServerManagement />;
       case 'settings':

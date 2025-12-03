@@ -53,11 +53,8 @@ use keepass::commands::{
 
 use cloudflared::commands::{
     check_cloudflared_version,
-    create_tunnel,
-    list_tunnels,
-    delete_tunnel,
-    start_tunnel,
-    stop_tunnel,
+    start_tcp_tunnel,
+    stop_tcp_tunnel,
 };
 
 use util::get_platform_info;
@@ -153,11 +150,8 @@ pub async fn run() {
             get_platform_info,
             // Cloudflared commands
             check_cloudflared_version,
-            create_tunnel,
-            list_tunnels,
-            delete_tunnel,
-            start_tunnel,
-            stop_tunnel,
+            start_tcp_tunnel,
+            stop_tcp_tunnel,
         ])
         .build(tauri::generate_context!())
         .expect("error while running tauri application");

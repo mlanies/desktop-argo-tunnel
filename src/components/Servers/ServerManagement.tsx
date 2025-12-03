@@ -26,6 +26,9 @@ export default function ServerManagement() {
     handleDisconnectService,
     toggleFavorite,
     favorites,
+    startTcpTunnel,
+    stopTcpTunnel,
+    tunnels,
     addRecentConnection
   } = useStore();
 
@@ -44,31 +47,48 @@ export default function ServerManagement() {
         .find((s) => s.id === selectedServiceId)
     : null;
 
-  const isServiceConnected = selectedServiceId
-    ? connected_services.includes(selectedServiceId)
-    : false;
+  // Check if service has an active tunnel
+  const activeTunnel = selectedService 
+    ? tunnels.find(t => t.hostname === selectedService.host)
+    : null;
+    
+  const isServiceConnected = !!activeTunnel;
 
   const isFavorite = selectedServiceId
     ? favorites.includes(selectedServiceId)
     : false;
 
   const handleToggleConnection = async () => {
-    if (!selectedServiceId || !selectedService) return;
+    if (!selectedServiceId || !selectedService || !selectedService.host) return;
 
     if (!isServiceConnected) {
-      handleConnectService(selectedServiceId);
+      // Generate random local port between 10000-60000
+      const localPort = Math.floor(Math.random() * (60000 - 10000 + 1) + 10000);
       
-      // Add to recent connections
-      addRecentConnection({
-        id: `conn-${Date.now()}`,
-        name: 'Service Connection',
-        protocol: selectedService.protocol as 'ssh' | 'rdp' | 'tcp',
-        timestamp: new Date().toISOString(),
-        serverId: selectedServerId!,
-        serviceId: selectedServiceId!
-      });
-    } else {
-      handleDisconnectService(selectedServiceId);
+      try {
+        await startTcpTunnel(selectedService.host, localPort);
+        handleConnectService(selectedServiceId);
+        
+        // Add to recent connections
+        addRecentConnection({
+          id: `conn-${Date.now()}`,
+          name: 'Service Connection',
+          protocol: selectedService.protocol as 'ssh' | 'rdp' | 'tcp',
+          timestamp: new Date().toISOString(),
+          serverId: selectedServerId!,
+          serviceId: selectedServiceId!
+        });
+      } catch (error) {
+        console.error('Failed to start tunnel:', error);
+        // TODO: Show error notification
+      }
+    } else if (activeTunnel) {
+      try {
+        await stopTcpTunnel(activeTunnel.id);
+        handleDisconnectService(selectedServiceId);
+      } catch (error) {
+        console.error('Failed to stop tunnel:', error);
+      }
     }
   };
 
@@ -262,8 +282,14 @@ export default function ServerManagement() {
             <span className="text-white font-mono text-sm">{selectedService.host || 'Not configured'}</span>
           </div>
           <div className="flex justify-between py-2 border-b border-white/5">
-            <span className="text-gray-400">Port</span>
-            <span className="text-white font-mono">{selectedService.port || 'Default'}</span>
+            <span className="text-gray-400">Local Port</span>
+            <span className="text-white font-mono">
+              {activeTunnel ? (
+                <span className="text-green-400 font-bold">{activeTunnel.localPort}</span>
+              ) : (
+                'Not connected'
+              )}
+            </span>
           </div>
           <div className="flex justify-between py-2">
             <span className="text-gray-400">Service ID</span>

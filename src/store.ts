@@ -13,6 +13,9 @@ export interface Tunnel {
   name: string;
   status: 'active' | 'inactive' | 'error';
   createdAt: string;
+  hostname?: string;
+  localPort?: number;
+  pid?: number;
   config?: Record<string, any>;
 }
 
@@ -55,11 +58,8 @@ type Actions = {
   setActiveTab: (tab: string) => void;
   
   // Async Tunnel Actions
-  fetchTunnels: () => Promise<void>;
-  createTunnel: (name: string) => Promise<void>;
-  deleteTunnel: (id: string) => Promise<void>;
-  startTunnel: (id: string) => Promise<void>;
-  stopTunnel: (id: string) => Promise<void>;
+  startTcpTunnel: (hostname: string, localPort: number) => Promise<void>;
+  stopTcpTunnel: (id: string) => Promise<void>;
   
   addRecentConnection: (connection: RecentConnection) => void;
   toggleFavorite: (serviceId: string) => void;
@@ -76,7 +76,7 @@ export const useStore = create<State & Actions>()(
     selectedServiceId: null,
     credentialsByServiceId: {},
     
-    tunnels: [],
+    tunnels: [], // Now represents active TCP tunnels
     recentConnections: [],
     favorites: [],
     activeTab: 'dashboard',
@@ -158,64 +158,32 @@ export const useStore = create<State & Actions>()(
       });
     },
     
-    // Async Tunnel Implementation
-    fetchTunnels: async () => {
+    // Async TCP Tunnel Implementation
+    startTcpTunnel: async (hostname: string, localPort: number) => {
       try {
-        const tunnels = await invoke<Tunnel[]>('list_tunnels');
+        const tunnel = await invoke<Tunnel>('start_tcp_tunnel', { hostname, localPort });
         set((state) => {
-          state.tunnels = tunnels;
+          state.tunnels.push({
+            ...tunnel,
+            status: 'active',
+            createdAt: new Date().toISOString(),
+            name: `${hostname}:${localPort}`
+          });
         });
       } catch (error) {
-        console.error('Failed to fetch tunnels:', error);
-      }
-    },
-
-    createTunnel: async (name: string) => {
-      try {
-        await invoke('create_tunnel', { name });
-        await get().fetchTunnels();
-      } catch (error) {
-        console.error('Failed to create tunnel:', error);
+        console.error('Failed to start TCP tunnel:', error);
         throw error;
       }
     },
 
-    deleteTunnel: async (id: string) => {
+    stopTcpTunnel: async (id: string) => {
       try {
-        await invoke('delete_tunnel', { id });
-        await get().fetchTunnels();
-      } catch (error) {
-        console.error('Failed to delete tunnel:', error);
-        throw error;
-      }
-    },
-
-    startTunnel: async (id: string) => {
-      try {
-        await invoke('start_tunnel', { id });
-        // Optimistic update
+        await invoke('stop_tcp_tunnel', { id });
         set((state) => {
-          const tunnel = state.tunnels.find(t => t.id === id);
-          if (tunnel) tunnel.status = 'active';
+          state.tunnels = state.tunnels.filter(t => t.id !== id);
         });
-        await get().fetchTunnels();
       } catch (error) {
-        console.error('Failed to start tunnel:', error);
-        throw error;
-      }
-    },
-
-    stopTunnel: async (id: string) => {
-      try {
-        await invoke('stop_tunnel', { id });
-        // Optimistic update
-        set((state) => {
-          const tunnel = state.tunnels.find(t => t.id === id);
-          if (tunnel) tunnel.status = 'inactive';
-        });
-        await get().fetchTunnels();
-      } catch (error) {
-        console.error('Failed to stop tunnel:', error);
+        console.error('Failed to stop TCP tunnel:', error);
         throw error;
       }
     },

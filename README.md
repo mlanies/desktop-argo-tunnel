@@ -205,11 +205,6 @@ This application provides a GUI for the following `cloudflared` commands:
 
 | CLI Command | GUI Equivalent |
 |-------------|----------------|
-| `cloudflared tunnel login` | Tunnel Wizard → Authentication |
-| `cloudflared tunnel create` | Create Tunnel Button |
-| `cloudflared tunnel list` | Tunnels Tab |
-| `cloudflared tunnel run` | Start Tunnel Button |
-| `cloudflared tunnel delete` | Delete Tunnel Action |
 | `cloudflared access ssh` | Connect to SSH Service |
 | `cloudflared access rdp` | Connect to RDP Service |
 | `cloudflared access tcp` | Connect to TCP Service |
