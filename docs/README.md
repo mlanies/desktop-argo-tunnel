@@ -27,4 +27,4 @@ The application is built using a modern tech stack to ensure performance and sec
 
 ## License
 
-Proprietary software. All rights reserved.
+This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
