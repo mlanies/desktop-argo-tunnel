@@ -11,6 +11,8 @@ import { useStore } from '../store';
 import "./__root.css";
 import { RemotesEvent } from "../generated/ts-rs/RemotesEvent";
 import { NotificationProvider } from '../components/NotificationSystem';
+import CommandPalette from '../components/CommandPalette/CommandPalette';
+import { useState } from 'react';
 
 
 export const Route = createRootRoute({
@@ -27,6 +29,8 @@ function RootComponent() {
     handleConnectService,
     handleDisconnectService,
   } = useStore();
+
+  const [showCommandPalette, setShowCommandPalette] = useState(false);
 
   useEffect(() => {
     let unlisten: UnlistenFn[] = [];
@@ -89,12 +93,29 @@ function RootComponent() {
     };
   }, []);
 
+  // Global Cmd+K / Ctrl+K hotkey
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setShowCommandPalette(prev => !prev);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   return (
     <NotificationProvider>
       <main className="font-work-sans bg-twogc-black text-twogc-white rounded-3xl border border-white margin-0 flex flex-col overflow-hidden h-screen w-full px-5">
         <Outlet />
         {import.meta.env.DEV && <TanStackRouterDevtools />}
       </main>
+      <CommandPalette 
+        isOpen={showCommandPalette} 
+        onClose={() => setShowCommandPalette(false)} 
+      />
     </NotificationProvider>
   );
 }

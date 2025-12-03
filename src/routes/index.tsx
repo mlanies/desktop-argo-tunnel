@@ -2,12 +2,33 @@ import { createFileRoute } from "@tanstack/react-router";
 import Sidebar from "../components/Navigation/Sidebar";
 import Header from "../components/Header/Header";
 import Dashboard from "../components/Dashboard/Dashboard";
+import TunnelsList from "../components/Tunnels/TunnelsList";
+import Settings from "../components/Settings/Settings";
+import ServerManagement from "../components/Servers/ServerManagement";
+import { useStore } from "../store";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
 
 function Index() {
+  const { activeTab } = useStore();
+
+  // Render different views based on active tab
+  const renderView = () => {
+    switch (activeTab) {
+      case 'tunnels':
+        return <TunnelsList />;
+      case 'servers':
+        return <ServerManagement />;
+      case 'settings':
+        return <Settings />;
+      case 'dashboard':
+      default:
+        return <Dashboard />;
+    }
+  };
+
   return (
     <>
       <Header />
@@ -24,7 +45,7 @@ function Index() {
             </div>
             
             <div className="relative z-10 h-full">
-              <Dashboard />
+              {renderView()}
             </div>
           </div>
         </div>

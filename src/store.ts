@@ -1,3 +1,5 @@
+import { invoke } from "@tauri-apps/api/core";
+
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { Company } from "./generated/ts-rs/Company";
@@ -6,21 +8,33 @@ import { Credential } from "./generated/ts-rs/Credential";
 
 type ErasedServiceCompanies = Company<ErasedService>[];
 
-type State = {
-  services_by_server_by_company: ErasedServiceCompanies;
-  expanded_companies: string[];
-  connected_services: string[];
-  selectedServerId: string | null;
-  selectedServiceId: string | null;
-  view_service_credential?: {
-    service: string;
-    remember: boolean;
-    credential: Credential | null;
-  };
-  credentialsByServiceId: Record<string, Credential>;
-};
+export interface Tunnel {
+  id: string;
+  name: string;
+  status: 'active' | 'inactive' | 'error';
+  createdAt: string;
+  config?: Record<string, any>;
+}
+
+export interface RecentConnection {
+  id: string;
+  name: string;
+  protocol: 'ssh' | 'rdp' | 'tcp';
+  timestamp: string;
+  serverId: string;
+  serviceId: string;
+}
+
+export interface AppSettings {
+  language: 'en' | 'ru';
+  theme: 'dark' | 'light' | 'system';
+  cloudflaredPath?: string;
+  autoConnect: boolean;
+  logLevel: 'debug' | 'info' | 'warn' | 'error';
+}
 
 type Actions = {
+  // ... existing actions
   handleServicesByServersByCompanyChange: (
     services_by_server_by_company: ErasedServiceCompanies,
   ) => void;
@@ -36,16 +50,44 @@ type Actions = {
     credential: Credential | null,
   ) => void;
   clearViewServiceCredential: () => void;
+  
+  // New actions
+  setActiveTab: (tab: string) => void;
+  
+  // Async Tunnel Actions
+  fetchTunnels: () => Promise<void>;
+  createTunnel: (name: string) => Promise<void>;
+  deleteTunnel: (id: string) => Promise<void>;
+  startTunnel: (id: string) => Promise<void>;
+  stopTunnel: (id: string) => Promise<void>;
+  
+  addRecentConnection: (connection: RecentConnection) => void;
+  toggleFavorite: (serviceId: string) => void;
+  updateSettings: (settings: Partial<AppSettings>) => void;
 };
 
 export const useStore = create<State & Actions>()(
-  immer((set) => ({
+  immer((set, get) => ({
+    // ... initial state
     services_by_server_by_company: [],
     expanded_companies: [],
     connected_services: [],
     selectedServerId: null,
     selectedServiceId: null,
     credentialsByServiceId: {},
+    
+    tunnels: [],
+    recentConnections: [],
+    favorites: [],
+    activeTab: 'dashboard',
+    settings: {
+      language: (localStorage.getItem('language') as 'en' | 'ru') || 'en',
+      theme: 'dark',
+      autoConnect: false,
+      logLevel: 'info',
+    },
+
+    // ... existing handlers
     handleServicesByServersByCompanyChange: (
       services_by_server_by_company: ErasedServiceCompanies,
     ) => {
@@ -78,7 +120,6 @@ export const useStore = create<State & Actions>()(
     setSelectedServer: (serverId: string | null) => {
       set((state) => {
         state.selectedServerId = serverId;
-        // Сбрасываем выбранный сервис при смене сервера
         if (serverId !== state.selectedServerId) {
           state.selectedServiceId = null;
         }
@@ -108,6 +149,100 @@ export const useStore = create<State & Actions>()(
     clearViewServiceCredential: () => {
       set((state) => {
         state.view_service_credential = undefined;
+      });
+    },
+    
+    setActiveTab: (tab: string) => {
+      set((state) => {
+        state.activeTab = tab;
+      });
+    },
+    
+    // Async Tunnel Implementation
+    fetchTunnels: async () => {
+      try {
+        const tunnels = await invoke<Tunnel[]>('list_tunnels');
+        set((state) => {
+          state.tunnels = tunnels;
+        });
+      } catch (error) {
+        console.error('Failed to fetch tunnels:', error);
+      }
+    },
+
+    createTunnel: async (name: string) => {
+      try {
+        await invoke('create_tunnel', { name });
+        await get().fetchTunnels();
+      } catch (error) {
+        console.error('Failed to create tunnel:', error);
+        throw error;
+      }
+    },
+
+    deleteTunnel: async (id: string) => {
+      try {
+        await invoke('delete_tunnel', { id });
+        await get().fetchTunnels();
+      } catch (error) {
+        console.error('Failed to delete tunnel:', error);
+        throw error;
+      }
+    },
+
+    startTunnel: async (id: string) => {
+      try {
+        await invoke('start_tunnel', { id });
+        // Optimistic update
+        set((state) => {
+          const tunnel = state.tunnels.find(t => t.id === id);
+          if (tunnel) tunnel.status = 'active';
+        });
+        await get().fetchTunnels();
+      } catch (error) {
+        console.error('Failed to start tunnel:', error);
+        throw error;
+      }
+    },
+
+    stopTunnel: async (id: string) => {
+      try {
+        await invoke('stop_tunnel', { id });
+        // Optimistic update
+        set((state) => {
+          const tunnel = state.tunnels.find(t => t.id === id);
+          if (tunnel) tunnel.status = 'inactive';
+        });
+        await get().fetchTunnels();
+      } catch (error) {
+        console.error('Failed to stop tunnel:', error);
+        throw error;
+      }
+    },
+    
+    addRecentConnection: (connection: RecentConnection) => {
+      set((state) => {
+        state.recentConnections = [connection, ...state.recentConnections].slice(0, 10);
+      });
+    },
+    
+    toggleFavorite: (serviceId: string) => {
+      set((state) => {
+        const index = state.favorites.indexOf(serviceId);
+        if (index > -1) {
+          state.favorites.splice(index, 1);
+        } else {
+          state.favorites.push(serviceId);
+        }
+      });
+    },
+    
+    updateSettings: (settings: Partial<AppSettings>) => {
+      set((state) => {
+        state.settings = { ...state.settings, ...settings };
+        if (settings.language) {
+          localStorage.setItem('language', settings.language);
+        }
       });
     },
   })),

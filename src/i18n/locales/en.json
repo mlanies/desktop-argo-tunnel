@@ -74,17 +74,11 @@
   "tunnels": {
     "title": "Tunnels",
     "createTunnel": "Create Tunnel",
-    "tunnelName": "Tunnel Name",
-    "tunnelId": "Tunnel ID",
-    "status": "Status",
+    "noTunnels": "No Tunnels Yet",
     "active": "Active",
     "inactive": "Inactive",
-    "noTunnels": "No tunnels configured",
     "wizard": {
       "title": "Create New Tunnel",
-      "step1": "Authentication",
-      "step2": "Configuration",
-      "step3": "Routing",
       "step4": "Review",
       "authenticate": "Authenticate with Cloudflare",
       "tunnelName": "Tunnel Name",

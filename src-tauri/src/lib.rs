@@ -6,6 +6,7 @@ mod remote;
 mod servers;
 mod settings;
 mod util;
+mod cloudflared;
 
 use activity::commands::{
     activity_add_event,
@@ -50,6 +51,15 @@ use keepass::commands::{
     check_password_quality,
 };
 
+use cloudflared::commands::{
+    check_cloudflared_version,
+    create_tunnel,
+    list_tunnels,
+    delete_tunnel,
+    start_tunnel,
+    stop_tunnel,
+};
+
 use util::get_platform_info;
 
 pub const UI_READY_EVENT: &str = "ui-ready";
@@ -82,6 +92,7 @@ pub async fn run() {
             keepass::setup(app.handle())?;
             servers::setup(app.handle())?;
             remote::setup(app.handle())?;
+            cloudflared::setup(app.handle())?;
 
             Ok(())
         })
@@ -140,6 +151,13 @@ pub async fn run() {
             get_security_stats,
             check_password_quality,
             get_platform_info,
+            // Cloudflared commands
+            check_cloudflared_version,
+            create_tunnel,
+            list_tunnels,
+            delete_tunnel,
+            start_tunnel,
+            stop_tunnel,
         ])
         .build(tauri::generate_context!())
         .expect("error while running tauri application");

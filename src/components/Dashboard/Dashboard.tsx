@@ -10,22 +10,28 @@ import {
 } from "lucide-react";
 import StatsCard from "./StatsCard";
 import Button from "../Button/Button";
+import { useStore } from "../../store";
+import { formatDistanceToNow } from "date-fns";
+import { enUS, ru } from "date-fns/locale";
 
 export default function Dashboard() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { 
+    services_by_server_by_company, 
+    connected_services, 
+    recentConnections,
+    tunnels 
+  } = useStore();
 
-  // Mock data - replace with real store data later
-  const stats = {
-    totalServers: 12,
-    activeConnections: 5,
-    recentActivity: 24
-  };
+  // Calculate real statistics
+  const totalServers = services_by_server_by_company.reduce(
+    (acc, company) => acc + company.servers.length, 
+    0
+  );
+  const activeConnections = connected_services.length;
+  const activeTunnels = tunnels.filter(t => t.status === 'active').length;
 
-  const recentConnections = [
-    { id: 1, name: "web-prod-01", protocol: "ssh", time: "2 min ago", status: "connected" },
-    { id: 2, name: "db-prod-01", protocol: "tcp", time: "15 min ago", status: "disconnected" },
-    { id: 3, name: "win-dev-02", protocol: "rdp", time: "1 hour ago", status: "disconnected" },
-  ];
+  const locale = i18n.language === 'ru' ? ru : enUS;
 
   return (
     <div className="flex flex-col h-full overflow-y-auto custom-scrollbar p-6 space-y-8">
@@ -50,21 +56,19 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatsCard
           title={t('dashboard.stats.totalServers')}
-          value={stats.totalServers}
+          value={totalServers}
           icon={<Server size={24} />}
           gradient="primary"
-          trend={{ value: 12, isPositive: true }}
         />
         <StatsCard
           title={t('dashboard.stats.activeConnections')}
-          value={stats.activeConnections}
+          value={activeConnections}
           icon={<Activity size={24} />}
           gradient="success"
-          trend={{ value: 5, isPositive: true }}
         />
         <StatsCard
-          title={t('dashboard.stats.recentActivity')}
-          value={stats.recentActivity}
+          title="Active Tunnels"
+          value={activeTunnels}
           icon={<Clock size={24} />}
           gradient="warning"
         />
@@ -79,39 +83,45 @@ export default function Dashboard() {
           </button>
         </div>
 
-        <div className="space-y-3">
-          {recentConnections.map((conn) => (
-            <div 
-              key={conn.id}
-              className="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer group"
-            >
-              <div className="flex items-center gap-4">
-                <div className={`p-2 rounded-lg ${
-                  conn.protocol === 'ssh' ? 'bg-green-500/20 text-green-400' :
-                  conn.protocol === 'rdp' ? 'bg-blue-500/20 text-blue-400' :
-                  'bg-purple-500/20 text-purple-400'
-                }`}>
-                  {conn.protocol === 'ssh' ? <Terminal size={18} /> : 
-                   conn.protocol === 'rdp' ? <Monitor size={18} /> : 
-                   <Activity size={18} />}
-                </div>
-                <div>
-                  <div className="font-medium text-white group-hover:text-blue-400 transition-colors">
-                    {conn.name}
+        {recentConnections.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            {t('dashboard.noActivity')}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {recentConnections.map((conn) => (
+              <div 
+                key={conn.id}
+                className="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`p-2 rounded-lg ${
+                    conn.protocol === 'ssh' ? 'bg-green-500/20 text-green-400' :
+                    conn.protocol === 'rdp' ? 'bg-blue-500/20 text-blue-400' :
+                    'bg-purple-500/20 text-purple-400'
+                  }`}>
+                    {conn.protocol === 'ssh' ? <Terminal size={18} /> : 
+                     conn.protocol === 'rdp' ? <Monitor size={18} /> : 
+                     <Activity size={18} />}
                   </div>
-                  <div className="text-xs text-gray-500 uppercase">{conn.protocol}</div>
+                  <div>
+                    <div className="font-medium text-white group-hover:text-blue-400 transition-colors">
+                      {conn.name}
+                    </div>
+                    <div className="text-xs text-gray-500 uppercase">{conn.protocol}</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-gray-500">
+                    {formatDistanceToNow(new Date(conn.timestamp), { addSuffix: true, locale })}
+                  </span>
+                  <div className="w-2 h-2 rounded-full bg-gray-600" />
                 </div>
               </div>
-
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-500">{conn.time}</span>
-                <div className={`w-2 h-2 rounded-full ${
-                  conn.status === 'connected' ? 'bg-green-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]' : 'bg-gray-600'
-                }`} />
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

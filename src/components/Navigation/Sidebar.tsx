@@ -11,22 +11,27 @@ import {
   ChevronDown
 } from "lucide-react";
 import NavItem from "./NavItem";
-import { useState } from "react";
 import { useStore } from "../../store";
-import classNames from "classnames";
 
 export default function Sidebar() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [expandedGroups, setExpandedGroups] = useState<string[]>(['production']);
+  const { 
+    activeTab, 
+    setActiveTab,
+    services_by_server_by_company,
+    expanded_companies,
+    handleExpandedCompaniesChange,
+    tunnels
+  } = useStore();
   
-  const toggleGroup = (group: string) => {
-    setExpandedGroups(prev => 
-      prev.includes(group) 
-        ? prev.filter(g => g !== group)
-        : [...prev, group]
-    );
+  const toggleCompany = (companyId: string) => {
+    const newExpanded = expanded_companies.includes(companyId)
+      ? expanded_companies.filter(id => id !== companyId)
+      : [...expanded_companies, companyId];
+    handleExpandedCompaniesChange(newExpanded);
   };
+
+  const activeTunnelsCount = tunnels.filter(t => t.status === 'active').length;
 
   return (
     <aside className="flex flex-col h-full bg-[#0e0e10] rounded-3xl border border-white/5 overflow-hidden">
@@ -43,7 +48,7 @@ export default function Sidebar() {
           label={t('nav.tunnels')} 
           active={activeTab === 'tunnels'}
           onClick={() => setActiveTab('tunnels')}
-          badge={2}
+          badge={activeTunnelsCount > 0 ? activeTunnelsCount : undefined}
         />
         <NavItem 
           icon={<Server size={18} />} 
@@ -87,32 +92,37 @@ export default function Sidebar() {
           </button>
         </div>
 
-        {/* Example Group */}
+        {/* Server Groups from real data */}
         <div className="space-y-1">
-          <div 
-            className="flex items-center gap-2 px-3 py-1.5 text-gray-400 hover:text-white cursor-pointer transition-colors"
-            onClick={() => toggleGroup('production')}
-          >
-            {expandedGroups.includes('production') ? (
-              <ChevronDown size={14} />
-            ) : (
-              <ChevronRight size={14} />
-            )}
-            <span className="text-sm font-medium">Production</span>
-          </div>
-          
-          {expandedGroups.includes('production') && (
-            <div className="pl-4 space-y-1">
-              <div className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg cursor-pointer transition-colors">
-                <div className="w-2 h-2 rounded-full bg-green-500" />
-                web-prod-01
+          {services_by_server_by_company.map((company) => (
+            <div key={company.id}>
+              <div 
+                className="flex items-center gap-2 px-3 py-1.5 text-gray-400 hover:text-white cursor-pointer transition-colors"
+                onClick={() => toggleCompany(company.id)}
+              >
+                {expanded_companies.includes(company.id) ? (
+                  <ChevronDown size={14} />
+                ) : (
+                  <ChevronRight size={14} />
+                )}
+                <span className="text-sm font-medium">{company.name}</span>
               </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg cursor-pointer transition-colors">
-                <div className="w-2 h-2 rounded-full bg-gray-500" />
-                db-prod-01
-              </div>
+              
+              {expanded_companies.includes(company.id) && (
+                <div className="pl-4 space-y-1">
+                  {company.servers.map((server) => (
+                    <div 
+                      key={server.id}
+                      className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg cursor-pointer transition-colors"
+                    >
+                      <div className="w-2 h-2 rounded-full bg-gray-500" />
+                      {server.name}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
+          ))}
         </div>
       </div>
 

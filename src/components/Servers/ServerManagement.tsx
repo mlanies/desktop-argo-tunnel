@@ -1,0 +1,289 @@
+import { useTranslation } from "react-i18next";
+import { useStore } from "../../store";
+import { 
+  Server as ServerIcon, 
+  Edit2, 
+  Trash2, 
+  Play, 
+  Square,
+  Terminal,
+  Monitor,
+  Network,
+  Star,
+  Clock
+} from "lucide-react";
+import Button from "../Button/Button";
+
+export default function ServerManagement() {
+  const { t } = useTranslation();
+  const {
+    services_by_server_by_company,
+    selectedServerId,
+    selectedServiceId,
+    connected_services,
+    setSelectedService,
+    handleConnectService,
+    handleDisconnectService,
+    toggleFavorite,
+    favorites,
+    addRecentConnection
+  } = useStore();
+
+  // Find selected server
+  const selectedServer = selectedServerId
+    ? services_by_server_by_company
+        .flatMap((c) => c.servers)
+        .find((s) => s.id === selectedServerId)
+    : null;
+
+  // Find selected service
+  const selectedService = selectedServiceId
+    ? services_by_server_by_company
+        .flatMap((c) => c.servers)
+        .flatMap((s) => s.services)
+        .find((s) => s.id === selectedServiceId)
+    : null;
+
+  const isServiceConnected = selectedServiceId
+    ? connected_services.includes(selectedServiceId)
+    : false;
+
+  const isFavorite = selectedServiceId
+    ? favorites.includes(selectedServiceId)
+    : false;
+
+  const handleToggleConnection = async () => {
+    if (!selectedServiceId || !selectedService) return;
+
+    if (!isServiceConnected) {
+      handleConnectService(selectedServiceId);
+      
+      // Add to recent connections
+      addRecentConnection({
+        id: `conn-${Date.now()}`,
+        name: 'Service Connection',
+        protocol: selectedService.protocol as 'ssh' | 'rdp' | 'tcp',
+        timestamp: new Date().toISOString(),
+        serverId: selectedServerId!,
+        serviceId: selectedServiceId!
+      });
+    } else {
+      handleDisconnectService(selectedServiceId);
+    }
+  };
+
+  const getProtocolIcon = (protocol: string) => {
+    switch (protocol.toLowerCase()) {
+      case 'ssh':
+        return <Terminal size={20} className="text-green-400" />;
+      case 'rdp':
+        return <Monitor size={20} className="text-blue-400" />;
+      case 'tcp':
+        return <Network size={20} className="text-purple-400" />;
+      default:
+        return <ServerIcon size={20} className="text-gray-400" />;
+    }
+  };
+
+  // Empty state when nothing is selected
+  if (!selectedServer && !selectedService) {
+    return (
+      <div className="flex flex-col h-full items-center justify-center p-6">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-500/10 flex items-center justify-center">
+            <ServerIcon size={32} className="text-gray-500" />
+          </div>
+          <h3 className="text-lg font-semibold text-white mb-2">No Server Selected</h3>
+          <p className="text-gray-400">
+            Select a server from the sidebar to view details and manage connections
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Server view (when server is selected but no service)
+  if (selectedServer && !selectedService) {
+    return (
+      <div className="flex flex-col h-full overflow-y-auto custom-scrollbar p-6 space-y-6">
+        {/* Server Header */}
+        <div className="flex items-start justify-between">
+          <div className="flex items-start gap-4">
+            <div className="p-3 rounded-xl bg-blue-500/20">
+              <ServerIcon size={24} className="text-blue-400" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-1">{selectedServer.name}</h2>
+              <p className="text-gray-400 text-sm">
+                {selectedServer.services.length} service{selectedServer.services.length !== 1 ? 's' : ''} configured
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button className="p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
+              <Edit2 size={18} />
+            </button>
+            <button className="p-2 rounded-lg hover:bg-white/10 transition-colors text-red-400 hover:text-red-300">
+              <Trash2 size={18} />
+            </button>
+          </div>
+        </div>
+
+        {/* Services List */}
+        <div className="glass-panel rounded-2xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Services</h3>
+          <div className="space-y-3">
+            {selectedServer.services.map((service) => {
+              const isConnected = connected_services.includes(service.id);
+              return (
+                <div
+                  key={service.id}
+                  onClick={() => setSelectedService(service.id)}
+                  className="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer group"
+                >
+                  <div className="flex items-center gap-4">
+                    {getProtocolIcon(service.protocol)}
+                    <div>
+                      <div className="font-medium text-white group-hover:text-blue-400 transition-colors">
+                        Service {service.id.slice(0, 8)}
+                      </div>
+                      <div className="text-xs text-gray-500 uppercase">{service.protocol}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      isConnected
+                        ? 'bg-green-500/20 text-green-400'
+                        : 'bg-gray-500/20 text-gray-400'
+                    }`}>
+                      {isConnected ? t('common.connected') : t('common.disconnected')}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Service detail view
+  if (!selectedService) return null;
+
+  return (
+    <div className="flex flex-col h-full overflow-y-auto custom-scrollbar p-6 space-y-6">
+      {/* Service Header */}
+      <div className="flex items-start justify-between">
+        <div className="flex items-start gap-4">
+          <div className={`p-3 rounded-xl ${
+            selectedService.protocol === 'ssh' ? 'bg-green-500/20' :
+            selectedService.protocol === 'rdp' ? 'bg-blue-500/20' :
+            'bg-purple-500/20'
+          }`}>
+            {getProtocolIcon(selectedService.protocol)}
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-1">Service {selectedService.id.slice(0, 8)}</h2>
+            <p className="text-gray-400 text-sm uppercase">{selectedService.protocol} Service</p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => selectedServiceId && toggleFavorite(selectedServiceId)}
+            className={`p-2 rounded-lg transition-colors ${
+              isFavorite
+                ? 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30'
+                : 'hover:bg-white/10 text-gray-400 hover:text-yellow-400'
+            }`}
+            title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            <Star size={18} fill={isFavorite ? 'currentColor' : 'none'} />
+          </button>
+          <button className="p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
+            <Edit2 size={18} />
+          </button>
+          <button className="p-2 rounded-lg hover:bg-white/10 transition-colors text-red-400 hover:text-red-300">
+            <Trash2 size={18} />
+          </button>
+        </div>
+      </div>
+
+      {/* Connection Status */}
+      <div className="glass-panel rounded-2xl p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold text-white">Connection Status</h3>
+          <div className="flex items-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${
+              isServiceConnected 
+                ? 'bg-green-500 animate-pulse-glow' 
+                : 'bg-gray-600'
+            }`} />
+            <span className={`text-sm font-medium ${
+              isServiceConnected ? 'text-green-400' : 'text-gray-400'
+            }`}>
+              {isServiceConnected ? t('common.connected') : t('common.disconnected')}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex gap-3">
+          <Button
+            onClick={handleToggleConnection}
+            cta={!isServiceConnected}
+            variant={isServiceConnected ? 'secondary' : 'primary'}
+            className="flex-1"
+          >
+            {isServiceConnected ? (
+              <>
+                <Square size={16} className="mr-2" />
+                {t('common.disconnect')}
+              </>
+            ) : (
+              <>
+                <Play size={16} className="mr-2" />
+                {t('common.connect')}
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+
+      {/* Service Details */}
+      <div className="glass-panel rounded-2xl p-6">
+        <h3 className="text-lg font-semibold text-white mb-4">Service Details</h3>
+        <div className="space-y-3">
+          <div className="flex justify-between py-2 border-b border-white/5">
+            <span className="text-gray-400">Protocol</span>
+            <span className="text-white font-medium uppercase">{selectedService.protocol}</span>
+          </div>
+          <div className="flex justify-between py-2 border-b border-white/5">
+            <span className="text-gray-400">Host</span>
+            <span className="text-white font-mono text-sm">{selectedService.host || 'Not configured'}</span>
+          </div>
+          <div className="flex justify-between py-2 border-b border-white/5">
+            <span className="text-gray-400">Port</span>
+            <span className="text-white font-mono">{selectedService.port || 'Default'}</span>
+          </div>
+          <div className="flex justify-between py-2">
+            <span className="text-gray-400">Service ID</span>
+            <span className="text-white font-mono text-xs">{selectedService.id}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      {isServiceConnected && (
+        <div className="glass-panel rounded-2xl p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Clock size={18} className="text-gray-400" />
+            <h3 className="text-lg font-semibold text-white">Recent Activity</h3>
+          </div>
+          <div className="text-sm text-gray-400">
+            Connected since {new Date().toLocaleTimeString()}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

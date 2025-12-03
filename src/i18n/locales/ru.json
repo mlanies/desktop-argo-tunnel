@@ -74,12 +74,12 @@
   "tunnels": {
     "title": "Туннели",
     "createTunnel": "Создать туннель",
-    "tunnelName": "Название туннеля",
+    "tunnelName": "Имя туннеля",
     "tunnelId": "ID туннеля",
     "status": "Статус",
     "active": "Активен",
     "inactive": "Неактивен",
-    "noTunnels": "Нет настроенных туннелей",
+    "noTunnels": "Нет туннелей",
     "wizard": {
       "title": "Создание нового туннеля",
       "step1": "Аутентификация",
