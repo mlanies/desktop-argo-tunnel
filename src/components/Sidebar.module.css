@@ -1,0 +1,32 @@
+.company-block {
+  background: #181818;
+  border-radius: 8px;
+  padding: 10px 0px;
+  margin-bottom: 3px;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+.company-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #d3d3d3;
+  transition: color 0.2s;
+}
+.company-title:hover {
+  color: #4b9eff;
+}
+.company-title.active {
+  color: #4b9eff;
+}
+.collapsible-content {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+.collapsible-content.open {
+  padding-top: 4px;
+  max-height: 1000px;
+  opacity: 1;
+  transform: translateY(0);
+} 

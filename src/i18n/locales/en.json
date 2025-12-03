@@ -1,0 +1,167 @@
+{
+  "common": {
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "search": "Search",
+    "connect": "Connect",
+    "disconnect": "Disconnect",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "connecting": "Connecting",
+    "loading": "Loading",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "tunnels": "Tunnels",
+    "servers": "Servers",
+    "recent": "Recent",
+    "favorites": "Favorites",
+    "settings": "Settings"
+  },
+  "header": {
+    "searchPlaceholder": "Search servers and tunnels...",
+    "minimize": "Minimize",
+    "close": "Close"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "stats": {
+      "totalServers": "Total Servers",
+      "activeConnections": "Active Connections",
+      "recentActivity": "Recent Activity"
+    },
+    "recentConnections": "Recent Connections",
+    "quickActions": "Quick Actions",
+    "addServer": "Add Server",
+    "createTunnel": "Create Tunnel",
+    "viewLogs": "View Logs",
+    "noActivity": "No recent activity",
+    "cloudflaredStatus": "Cloudflared Status",
+    "running": "Running",
+    "stopped": "Stopped"
+  },
+  "servers": {
+    "title": "Servers",
+    "addServer": "Add Server",
+    "addService": "Add Service",
+    "noServers": "No servers available",
+    "serverName": "Server Name",
+    "serverDescription": "Server Description",
+    "description": "Description (optional)",
+    "protocol": "Protocol",
+    "host": "Host",
+    "port": "Port",
+    "hostPlaceholder": "example.com or IP address",
+    "portPlaceholder": "22 for SSH, 3389 for RDP",
+    "errors": {
+      "nameRequired": "Server name is required",
+      "fieldsRequired": "All fields are required",
+      "invalidPort": "Port must be a number between 1 and 65535"
+    },
+    "success": {
+      "serverAdded": "Server added successfully",
+      "serviceAdded": "Service added successfully"
+    }
+  },
+  "tunnels": {
+    "title": "Tunnels",
+    "createTunnel": "Create Tunnel",
+    "tunnelName": "Tunnel Name",
+    "tunnelId": "Tunnel ID",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "noTunnels": "No tunnels configured",
+    "wizard": {
+      "title": "Create New Tunnel",
+      "step1": "Authentication",
+      "step2": "Configuration",
+      "step3": "Routing",
+      "step4": "Review",
+      "authenticate": "Authenticate with Cloudflare",
+      "tunnelName": "Tunnel Name",
+      "tunnelNamePlaceholder": "my-tunnel",
+      "ingressRules": "Ingress Rules",
+      "addRule": "Add Rule",
+      "hostname": "Hostname",
+      "service": "Service",
+      "create": "Create Tunnel"
+    },
+    "config": {
+      "title": "Configuration",
+      "editor": "Configuration Editor",
+      "validate": "Validate",
+      "template": "Use Template",
+      "import": "Import",
+      "export": "Export"
+    },
+    "logs": {
+      "title": "Tunnel Logs",
+      "clear": "Clear",
+      "export": "Export",
+      "autoScroll": "Auto-scroll",
+      "filter": "Filter by level"
+    }
+  },
+  "access": {
+    "title": "Cloudflare Access",
+    "login": "Login to Access",
+    "ssh": "SSH Access",
+    "rdp": "RDP Access",
+    "tcp": "TCP Access",
+    "configure": "Configure Access",
+    "generateConfig": "Generate SSH Config"
+  },
+  "settings": {
+    "title": "Settings",
+    "general": "General",
+    "cloudflared": "Cloudflared",
+    "tunnels": "Tunnels",
+    "network": "Network",
+    "advanced": "Advanced",
+    "language": "Language",
+    "theme": "Theme",
+    "startupBehavior": "Startup Behavior",
+    "binaryPath": "Cloudflared Binary Path",
+    "logLevel": "Log Level",
+    "defaultConfig": "Default Configuration",
+    "autoConnect": "Auto-connect on Startup",
+    "proxySettings": "Proxy Settings",
+    "timeout": "Connection Timeout",
+    "debugMode": "Debug Mode",
+    "experimentalFeatures": "Experimental Features"
+  },
+  "credentials": {
+    "title": "Credentials",
+    "username": "Username",
+    "password": "Password (optional)",
+    "remember": "Remember credentials",
+    "edit": "Edit Credentials",
+    "save": "Save Credentials",
+    "usernamePlaceholder": "Enter username",
+    "passwordPlaceholder": "Enter password"
+  },
+  "notifications": {
+    "connectionEstablished": "Connection established",
+    "connectionFailed": "Connection failed",
+    "tunnelCreated": "Tunnel created successfully",
+    "tunnelDeleted": "Tunnel deleted",
+    "configSaved": "Configuration saved",
+    "credentialsSaved": "Credentials saved"
+  },
+  "errors": {
+    "generic": "An error occurred",
+    "connectionFailed": "Failed to connect",
+    "tunnelCreationFailed": "Failed to create tunnel",
+    "invalidConfig": "Invalid configuration",
+    "authenticationFailed": "Authentication failed"
+  }
+}

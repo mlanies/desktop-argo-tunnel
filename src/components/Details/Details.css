@@ -1,0 +1,20 @@
+.twogc-details summary {
+  background: var(--twogc-gradient);
+}
+
+.twogc-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.twogc-details summary::before {
+  transform-origin: center;
+  transform: rotate(0deg);
+}
+
+.twogc-details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.twogc-details summary > * {
+  margin-left: 0;
+}

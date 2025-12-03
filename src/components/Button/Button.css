@@ -1,0 +1,246 @@
+.twogc-button {
+  --padding-value: calc(var(--spacing) * 4);
+  --border-radius: var(--radius-lg);
+  --outline-width: 1.5px;
+  position: relative;
+  padding: var(--padding-value) !important;
+  border: none;
+  background: none;
+  overflow: hidden;
+  isolation: isolate; /* Creates a new stacking context */
+}
+
+.twogc-button:active {
+  transform: scale(0.98);
+}
+
+.twogc-button::before,
+.twogc-button-default::before,
+.twogc-button-cta::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -2;
+  border-radius: var(--border-radius);
+  transition: inherit;
+}
+
+.twogc-button::after,
+.twogc-button-default::after,
+.twogc-button-cta::after {
+  content: "";
+  position: absolute;
+  top: var(--outline-width);
+  left: var(--outline-width);
+  right: var(--outline-width);
+  bottom: var(--outline-width);
+  border-radius: calc(var(--border-radius) - var(--outline-width));
+  z-index: -1;
+  transition: inherit;
+}
+
+.twogc-button-default::after {
+  background: linear-gradient(
+    var(--color-twogc-black),
+    var(--color-twogc-black)
+  );
+}
+
+.twogc-button-default:hover::after {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)),
+    var(--twogc-gradient);
+}
+
+/* Базовые стили кнопок */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-work-sans);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  overflow: hidden;
+  user-select: none;
+  white-space: nowrap;
+  min-height: 44px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+/* Размеры кнопок */
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 12px;
+  min-height: 36px;
+}
+
+.btn-md {
+  padding: 12px 24px;
+  font-size: 14px;
+  min-height: 44px;
+}
+
+.btn-lg {
+  padding: 16px 32px;
+  font-size: 16px;
+  min-height: 52px;
+}
+
+/* Варианты кнопок */
+.btn-primary {
+  background: var(--color-twogc-primary);
+  color: var(--color-twogc-white);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-twogc-primary-hover);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--color-twogc-gray-200);
+  color: var(--color-twogc-white);
+  border: 1px solid var(--color-twogc-gray-300);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-twogc-gray-300);
+  border-color: var(--color-twogc-gray-400);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-twogc-gray-500);
+  border: 1px solid var(--color-twogc-gray-200);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--color-twogc-gray-100);
+  color: var(--color-twogc-white);
+  border-color: var(--color-twogc-gray-300);
+}
+
+.btn-success {
+  background: var(--color-twogc-success);
+  color: var(--color-twogc-white);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-success:hover:not(:disabled) {
+  background: #059669;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  background: var(--color-twogc-error);
+  color: var(--color-twogc-white);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #dc2626;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+/* CTA кнопки */
+.btn-cta {
+  background: var(--gradient-primary);
+  color: var(--color-twogc-white);
+  font-weight: 600;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-cta:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.btn-cta:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Состояние загрузки */
+.btn-loading {
+  cursor: wait;
+}
+
+.btn-loading:disabled {
+  opacity: 0.8;
+}
+
+/* Анимации для иконок */
+.btn svg {
+  transition: transform var(--transition-fast);
+}
+
+.btn:hover:not(:disabled) svg {
+  transform: scale(1.1);
+}
+
+/* Фокус для доступности */
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.btn:focus:not(:focus-visible) {
+  box-shadow: none;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .btn {
+    padding: 10px 20px;
+    font-size: 13px;
+    min-height: 40px;
+  }
+  
+  .btn-sm {
+    padding: 6px 12px;
+    font-size: 11px;
+    min-height: 32px;
+  }
+  
+  .btn-lg {
+    padding: 14px 28px;
+    font-size: 15px;
+    min-height: 48px;
+  }
+}
+

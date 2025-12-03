@@ -1,0 +1,167 @@
+{
+  "common": {
+    "add": "Добавить",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "close": "Закрыть",
+    "search": "Поиск",
+    "connect": "Подключиться",
+    "disconnect": "Отключиться",
+    "connected": "Подключено",
+    "disconnected": "Отключено",
+    "connecting": "Подключение",
+    "loading": "Загрузка",
+    "error": "Ошибка",
+    "success": "Успешно",
+    "warning": "Предупреждение",
+    "info": "Информация"
+  },
+  "nav": {
+    "dashboard": "Панель управления",
+    "tunnels": "Туннели",
+    "servers": "Серверы",
+    "recent": "Недавние",
+    "favorites": "Избранное",
+    "settings": "Настройки"
+  },
+  "header": {
+    "searchPlaceholder": "Поиск серверов и туннелей...",
+    "minimize": "Свернуть",
+    "close": "Закрыть"
+  },
+  "dashboard": {
+    "title": "Панель управления",
+    "stats": {
+      "totalServers": "Всего серверов",
+      "activeConnections": "Активных подключений",
+      "recentActivity": "Недавняя активность"
+    },
+    "recentConnections": "Недавние подключения",
+    "quickActions": "Быстрые действия",
+    "addServer": "Добавить сервер",
+    "createTunnel": "Создать туннель",
+    "viewLogs": "Просмотр логов",
+    "noActivity": "Нет недавней активности",
+    "cloudflaredStatus": "Статус Cloudflared",
+    "running": "Запущен",
+    "stopped": "Остановлен"
+  },
+  "servers": {
+    "title": "Серверы",
+    "addServer": "Добавить сервер",
+    "addService": "Добавить сервис",
+    "noServers": "Нет доступных серверов",
+    "serverName": "Название сервера",
+    "serverDescription": "Описание сервера",
+    "description": "Описание (необязательно)",
+    "protocol": "Протокол",
+    "host": "Хост",
+    "port": "Порт",
+    "hostPlaceholder": "example.com или IP адрес",
+    "portPlaceholder": "22 для SSH, 3389 для RDP",
+    "errors": {
+      "nameRequired": "Введите название сервера",
+      "fieldsRequired": "Заполните все поля",
+      "invalidPort": "Порт должен быть числом от 1 до 65535"
+    },
+    "success": {
+      "serverAdded": "Сервер добавлен",
+      "serviceAdded": "Сервис добавлен"
+    }
+  },
+  "tunnels": {
+    "title": "Туннели",
+    "createTunnel": "Создать туннель",
+    "tunnelName": "Название туннеля",
+    "tunnelId": "ID туннеля",
+    "status": "Статус",
+    "active": "Активен",
+    "inactive": "Неактивен",
+    "noTunnels": "Нет настроенных туннелей",
+    "wizard": {
+      "title": "Создание нового туннеля",
+      "step1": "Аутентификация",
+      "step2": "Конфигурация",
+      "step3": "Маршрутизация",
+      "step4": "Проверка",
+      "authenticate": "Войти в Cloudflare",
+      "tunnelName": "Название туннеля",
+      "tunnelNamePlaceholder": "my-tunnel",
+      "ingressRules": "Правила входящего трафика",
+      "addRule": "Добавить правило",
+      "hostname": "Имя хоста",
+      "service": "Сервис",
+      "create": "Создать туннель"
+    },
+    "config": {
+      "title": "Конфигурация",
+      "editor": "Редактор конфигурации",
+      "validate": "Проверить",
+      "template": "Использовать шаблон",
+      "import": "Импорт",
+      "export": "Экспорт"
+    },
+    "logs": {
+      "title": "Логи туннеля",
+      "clear": "Очистить",
+      "export": "Экспорт",
+      "autoScroll": "Автопрокрутка",
+      "filter": "Фильтр по уровню"
+    }
+  },
+  "access": {
+    "title": "Cloudflare Access",
+    "login": "Войти в Access",
+    "ssh": "SSH доступ",
+    "rdp": "RDP доступ",
+    "tcp": "TCP доступ",
+    "configure": "Настроить доступ",
+    "generateConfig": "Сгенерировать SSH конфиг"
+  },
+  "settings": {
+    "title": "Настройки",
+    "general": "Общие",
+    "cloudflared": "Cloudflared",
+    "tunnels": "Туннели",
+    "network": "Сеть",
+    "advanced": "Расширенные",
+    "language": "Язык",
+    "theme": "Тема",
+    "startupBehavior": "Поведение при запуске",
+    "binaryPath": "Путь к Cloudflared",
+    "logLevel": "Уровень логирования",
+    "defaultConfig": "Конфигурация по умолчанию",
+    "autoConnect": "Автоподключение при запуске",
+    "proxySettings": "Настройки прокси",
+    "timeout": "Таймаут подключения",
+    "debugMode": "Режим отладки",
+    "experimentalFeatures": "Экспериментальные функции"
+  },
+  "credentials": {
+    "title": "Учетные данные",
+    "username": "Имя пользователя",
+    "password": "Пароль (необязательно)",
+    "remember": "Запомнить учетные данные",
+    "edit": "Изменить учетные данные",
+    "save": "Сохранить учетные данные",
+    "usernamePlaceholder": "Введите имя пользователя",
+    "passwordPlaceholder": "Введите пароль"
+  },
+  "notifications": {
+    "connectionEstablished": "Соединение установлено",
+    "connectionFailed": "Не удалось подключиться",
+    "tunnelCreated": "Туннель успешно создан",
+    "tunnelDeleted": "Туннель удален",
+    "configSaved": "Конфигурация сохранена",
+    "credentialsSaved": "Учетные данные сохранены"
+  },
+  "errors": {
+    "generic": "Произошла ошибка",
+    "connectionFailed": "Не удалось подключиться",
+    "tunnelCreationFailed": "Не удалось создать туннель",
+    "invalidConfig": "Неверная конфигурация",
+    "authenticationFailed": "Ошибка аутентификации"
+  }
+}
