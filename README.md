@@ -8,14 +8,14 @@
 
 ## Overview
 
-**Desktop Argo Tunnel Manager** is a powerful desktop application that provides a graphical interface for `cloudflared`, eliminating the need for complex command-line operations. Manage your Cloudflare Tunnels, SSH/RDP connections, and server infrastructure through an intuitive, modern interface.
+**Desktop Argo Tunnel Manager** is a desktop application that provides a graphical interface for managing `cloudflared access` connections. Connect to remote services (SSH, RDP, TCP) through Cloudflare's secure network with automatic local port forwarding.
 
 ### Why Use This Application?
 
-- **No Command Line Required**: All `cloudflared` functionality accessible through a beautiful GUI
-- **Visual Tunnel Management**: Create, configure, and monitor tunnels with visual wizards
+- **No Command Line Required**: All `cloudflared access` functionality through a beautiful GUI
+- **Automatic Port Management**: Random local port assignment for each connection
 - **One-Click Connections**: Connect to SSH, RDP, and TCP services instantly
-- **Centralized Management**: Manage all your servers and tunnels from a single dashboard
+- **Centralized Management**: Manage all your servers and active tunnels from a single dashboard
 - **Secure & Local**: All credentials stored locally with encryption
 - **Multi-Language**: Full support for English and Russian
 
@@ -23,22 +23,23 @@
 
 ### Core Capabilities
 
-- **Tunnel Management**
-  - Create and configure Cloudflare Tunnels visually
-  - Real-time tunnel status monitoring
-  - Live log viewing and filtering
-  - YAML configuration editor with validation
+- **Active Connection Management**
+  - View all running TCP tunnels in real-time
+  - Monitor local ports and process IDs
+  - Stop tunnels with one click
+  - Automatic port assignment (10000-60000 range)
   
 - **Server & Service Management**
   - Organize servers by groups/companies
   - Support for SSH, RDP, and TCP protocols
   - Secure credential storage
-  - Quick connect with saved configurations
+  - One-click connection via `cloudflared access tcp`
+  - Automatic tunnel creation on connect
 
 - **Dashboard & Analytics**
   - Real-time connection statistics
   - Recent activity tracking
-  - Tunnel health monitoring
+  - Connection health monitoring
   - Quick access to favorites
 
 ### Modern UI/UX
@@ -100,16 +101,20 @@
    - Enter server details (name, host, port, protocol)
    - Save credentials if needed
 
-3. **Create a Tunnel** (Optional)
-   - Navigate to the "Tunnels" tab
-   - Click "Create Tunnel"
-   - Follow the wizard to authenticate and configure
-   - The tunnel will start automatically
-
-4. **Connect to a Service**
+3. **Connect to a Service**
+   - Navigate to the "Servers" tab
    - Select a server from the list
-   - Click "Connect" next to the desired service
-   - The application handles authentication automatically
+   - Choose a service (SSH, RDP, or TCP)
+   - Click "Connect"
+   - The application will:
+     - Automatically assign a random local port (10000-60000)
+     - Start a `cloudflared access tcp` tunnel
+     - Display the local port in the service details
+
+4. **View Active Connections**
+   - Navigate to "Active Connections" tab
+   - See all running tunnels with their local ports and PIDs
+   - Stop tunnels when no longer needed
 
 ## Architecture
 

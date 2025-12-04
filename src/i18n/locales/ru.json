@@ -21,6 +21,7 @@
   "nav": {
     "dashboard": "Панель управления",
     "tunnels": "Туннели",
+    "activeConnections": "Активные подключения",
     "servers": "Серверы",
     "recent": "Недавние",
     "favorites": "Избранное",
@@ -33,6 +34,8 @@
   },
   "dashboard": {
     "title": "Панель управления",
+    "welcome": "Добро пожаловать, вот что происходит",
+    "addServer": "Добавить сервер",
     "stats": {
       "totalServers": "Всего серверов",
       "activeConnections": "Активных подключений",
@@ -40,7 +43,6 @@
     },
     "recentConnections": "Недавние подключения",
     "quickActions": "Быстрые действия",
-    "addServer": "Добавить сервер",
     "createTunnel": "Создать туннель",
     "viewLogs": "Просмотр логов",
     "noActivity": "Нет недавней активности",
@@ -163,5 +165,29 @@
     "tunnelCreationFailed": "Не удалось создать туннель",
     "invalidConfig": "Неверная конфигурация",
     "authenticationFailed": "Ошибка аутентификации"
+  },
+  "modals": {
+    "addServer": {
+      "title": "Добавить сервер",
+      "serverName": "Название сервера",
+      "serverNamePlaceholder": "Мой сервер",
+      "description": "Описание (необязательно)",
+      "descriptionPlaceholder": "Продакшн сервер",
+      "note": "Сервер будет добавлен в группу \"Локальные серверы\"",
+      "adding": "Добавление...",
+      "addButton": "Добавить сервер",
+      "required": "обязательно"
+    },
+    "addService": {
+      "title": "Добавить сервис",
+      "to": "к",
+      "protocol": "Протокол",
+      "host": "Хост",
+      "hostPlaceholder": "example.com или 192.168.1.100",
+      "port": "Порт",
+      "adding": "Добавление...",
+      "addButton": "Добавить сервис",
+      "required": "обязательно"
+    }
   }
 }

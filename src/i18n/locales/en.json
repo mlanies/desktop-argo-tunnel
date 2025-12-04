@@ -33,6 +33,8 @@
   },
   "dashboard": {
     "title": "Dashboard",
+    "welcome": "Welcome back, here's what's happening",
+    "addServer": "Add Server",
     "stats": {
       "totalServers": "Total Servers",
       "activeConnections": "Active Connections",
@@ -40,7 +42,6 @@
     },
     "recentConnections": "Recent Connections",
     "quickActions": "Quick Actions",
-    "addServer": "Add Server",
     "createTunnel": "Create Tunnel",
     "viewLogs": "View Logs",
     "noActivity": "No recent activity",
@@ -157,5 +158,29 @@
     "tunnelCreationFailed": "Failed to create tunnel",
     "invalidConfig": "Invalid configuration",
     "authenticationFailed": "Authentication failed"
+  },
+  "modals": {
+    "addServer": {
+      "title": "Add Server",
+      "serverName": "Server Name",
+      "serverNamePlaceholder": "My Server",
+      "description": "Description (Optional)",
+      "descriptionPlaceholder": "Production server",
+      "note": "Server will be added to \"Local Servers\" group",
+      "adding": "Adding...",
+      "addButton": "Add Server",
+      "required": "required"
+    },
+    "addService": {
+      "title": "Add Service",
+      "to": "to",
+      "protocol": "Protocol",
+      "host": "Host",
+      "hostPlaceholder": "example.com or 192.168.1.100",
+      "port": "Port",
+      "adding": "Adding...",
+      "addButton": "Add Service",
+      "required": "required"
+    }
   }
 }

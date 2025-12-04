@@ -13,6 +13,9 @@ import Button from "../Button/Button";
 import { useStore } from "../../store";
 import { formatDistanceToNow } from "date-fns";
 import { enUS, ru } from "date-fns/locale";
+import { useState } from "react";
+import AddServerModal from "../Servers/AddServerModal";
+import Portal from "../Portal";
 
 export default function Dashboard() {
   const { t, i18n } = useTranslation();
@@ -20,8 +23,11 @@ export default function Dashboard() {
     services_by_server_by_company, 
     connected_services, 
     recentConnections,
-    tunnels 
+    tunnels,
+    setActiveTab
   } = useStore();
+
+  const [showAddServerModal, setShowAddServerModal] = useState(false);
 
   // Calculate real statistics
   const totalServers = services_by_server_by_company.reduce(
@@ -39,15 +45,23 @@ export default function Dashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white mb-1">{t('dashboard.title')}</h1>
-          <p className="text-gray-400 text-sm">Welcome back, here's what's happening</p>
+          <p className="text-gray-400 text-sm">{t('dashboard.welcome')}</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="secondary" size="sm">
+          <Button 
+            variant="secondary" 
+            size="sm"
+            onClick={() => setActiveTab('active-connections')}
+          >
             {t('dashboard.viewLogs')}
           </Button>
-          <Button cta size="sm">
+          <Button 
+            cta 
+            size="sm"
+            onClick={() => setShowAddServerModal(true)}
+          >
             <Plus size={16} className="mr-2" />
-            {t('dashboard.createTunnel')}
+            {t('dashboard.addServer')}
           </Button>
         </div>
       </div>
@@ -78,7 +92,10 @@ export default function Dashboard() {
       <div className="glass-panel rounded-2xl p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-semibold text-white">{t('dashboard.recentConnections')}</h2>
-          <button className="text-sm text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1">
+          <button 
+            onClick={() => setActiveTab('servers')}
+            className="text-sm text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1"
+          >
             View all <ArrowRight size={14} />
           </button>
         </div>
@@ -123,6 +140,18 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+      
+      {/* Modals */}
+      {showAddServerModal && (
+        <Portal>
+          <AddServerModal
+            onClose={() => setShowAddServerModal(false)}
+            onSuccess={() => {
+              // Data will be updated via servers_event
+            }}
+          />
+        </Portal>
+      )}
     </div>
   );
 }

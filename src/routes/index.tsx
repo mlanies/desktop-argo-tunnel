@@ -5,6 +5,8 @@ import Dashboard from "../components/Dashboard/Dashboard";
 import ActiveConnections from "../components/Tunnels/ActiveConnections";
 import Settings from "../components/Settings/Settings";
 import ServerManagement from "../components/Servers/ServerManagement";
+import RecentConnections from "../components/Recent/RecentConnections";
+import Favorites from "../components/Favorites/Favorites";
 import { useStore } from "../store";
 
 export const Route = createFileRoute("/")({
@@ -21,6 +23,10 @@ function Index() {
         return <ActiveConnections />;
       case 'servers':
         return <ServerManagement />;
+      case 'recent':
+        return <RecentConnections />;
+      case 'favorites':
+        return <Favorites />;
       case 'settings':
         return <Settings />;
       case 'dashboard':

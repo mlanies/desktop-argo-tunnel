@@ -13,6 +13,8 @@ import { RemotesEvent } from "../generated/ts-rs/RemotesEvent";
 import { NotificationProvider } from '../components/NotificationSystem';
 import CommandPalette from '../components/CommandPalette/CommandPalette';
 import { useState } from 'react';
+import { Toaster } from 'react-hot-toast';
+import CloudflaredCheckModal from '../components/CloudflaredCheckModal';
 
 
 export const Route = createRootRoute({
@@ -31,6 +33,8 @@ function RootComponent() {
   } = useStore();
 
   const [showCommandPalette, setShowCommandPalette] = useState(false);
+  const [cloudflaredInstalled, setCloudflaredInstalled] = useState(true);
+  const [showCloudflaredModal, setShowCloudflaredModal] = useState(false);
 
   useEffect(() => {
     let unlisten: UnlistenFn[] = [];
@@ -106,6 +110,23 @@ function RootComponent() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Check cloudflared installation on startup
+  useEffect(() => {
+    const checkCloudflared = async () => {
+      try {
+        const { invoke } = await import('@tauri-apps/api/core');
+        await invoke('check_cloudflared_version');
+        setCloudflaredInstalled(true);
+      } catch (error) {
+        console.error('Cloudflared not found:', error);
+        setCloudflaredInstalled(false);
+        setShowCloudflaredModal(true);
+      }
+    };
+
+    checkCloudflared();
+  }, []);
+
   return (
     <NotificationProvider>
       <main className="font-work-sans bg-twogc-black text-twogc-white rounded-3xl border border-white margin-0 flex flex-col overflow-hidden h-screen w-full px-5">
@@ -116,6 +137,22 @@ function RootComponent() {
         isOpen={showCommandPalette} 
         onClose={() => setShowCommandPalette(false)} 
       />
+      {showCloudflaredModal && (
+        <CloudflaredCheckModal
+          onRetry={async () => {
+            try {
+              const { invoke } = await import('@tauri-apps/api/core');
+              await invoke('check_cloudflared_version');
+              setCloudflaredInstalled(true);
+              setShowCloudflaredModal(false);
+            } catch (error) {
+              console.error('Cloudflared still not found');
+            }
+          }}
+          onClose={() => setShowCloudflaredModal(false)}
+        />
+      )}
+      <Toaster />
     </NotificationProvider>
   );
 }

@@ -10,9 +10,15 @@ import {
   Monitor,
   Network,
   Star,
-  Clock
+  Clock,
+  Plus
 } from "lucide-react";
 import Button from "../Button/Button";
+import { useState } from "react";
+import AddServiceModal from "./AddServiceModal";
+import AddServerModal from "./AddServerModal";
+import { useToast } from "../../hooks/useToast";
+import Portal from "../Portal";
 
 export default function ServerManagement() {
   const { t } = useTranslation();
@@ -31,6 +37,10 @@ export default function ServerManagement() {
     tunnels,
     addRecentConnection
   } = useStore();
+
+  const [showAddServiceModal, setShowAddServiceModal] = useState(false);
+  const [showAddServerModal, setShowAddServerModal] = useState(false);
+  const toast = useToast();
 
   // Find selected server
   const selectedServer = selectedServerId
@@ -68,6 +78,7 @@ export default function ServerManagement() {
       try {
         await startTcpTunnel(selectedService.host, localPort);
         handleConnectService(selectedServiceId);
+        toast.success(`Connected to ${selectedService.host} on port ${localPort}`);
         
         // Add to recent connections
         addRecentConnection({
@@ -80,14 +91,16 @@ export default function ServerManagement() {
         });
       } catch (error) {
         console.error('Failed to start tunnel:', error);
-        // TODO: Show error notification
+        toast.error(`Failed to connect: ${error}`);
       }
     } else if (activeTunnel) {
       try {
         await stopTcpTunnel(activeTunnel.id);
         handleDisconnectService(selectedServiceId);
+        toast.success('Disconnected successfully');
       } catch (error) {
         console.error('Failed to stop tunnel:', error);
+        toast.error(`Failed to disconnect: ${error}`);
       }
     }
   };
@@ -105,23 +118,93 @@ export default function ServerManagement() {
     }
   };
 
-  // Empty state when nothing is selected
-  if (!selectedServer && !selectedService) {
+  // Check if there are any servers in the system
+  const hasServers = services_by_server_by_company.length > 0 && 
+    services_by_server_by_company.some((c: any) => c.servers.length > 0);
+  
+  // Empty state when NO servers exist at all
+  if (!hasServers) {
+    console.log('No servers in system, showing add server button');
     return (
-      <div className="flex flex-col h-full items-center justify-center p-6">
-        <div className="text-center max-w-md">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-500/10 flex items-center justify-center">
-            <ServerIcon size={32} className="text-gray-500" />
+      <>
+        <div className="flex flex-col h-full items-center justify-center p-6">
+          <div className="text-center max-w-md">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-500/10 flex items-center justify-center">
+              <ServerIcon size={32} className="text-gray-500" />
+            </div>
+            <h3 className="text-lg font-semibold text-white mb-2">Нет серверов</h3>
+            <p className="text-gray-400 mb-6">
+              Добавьте сервер для начала работы с подключениями
+            </p>
+            <Button 
+              cta 
+              onClick={() => {
+                console.log('Add Server button clicked!');
+                setShowAddServerModal(true);
+              }}
+            >
+              <Plus size={16} className="mr-2" />
+              Добавить сервер
+            </Button>
           </div>
-          <h3 className="text-lg font-semibold text-white mb-2">No Server Selected</h3>
-          <p className="text-gray-400">
-            Select a server from the sidebar to view details and manage connections
-          </p>
         </div>
-      </div>
+        
+        {/* Modals */}
+        {showAddServerModal && (
+          <Portal>
+            <AddServerModal
+              onClose={() => setShowAddServerModal(false)}
+              onSuccess={() => {
+                // Data will be updated via servers_event
+              }}
+            />
+          </Portal>
+        )}
+      </>
     );
   }
 
+  // Empty state when servers exist but nothing is selected
+  if (!selectedServer && !selectedService) {
+    console.log('Servers exist but nothing selected');
+    return (
+      <>
+        <div className="flex flex-col h-full items-center justify-center p-6">
+          <div className="text-center max-w-md">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-500/10 flex items-center justify-center">
+              <ServerIcon size={32} className="text-gray-500" />
+            </div>
+            <h3 className="text-lg font-semibold text-white mb-2">Выберите сервер</h3>
+            <p className="text-gray-400 mb-6">
+              Перейдите на вкладку "Серверы" в боковом меню и выберите сервер для просмотра деталей
+            </p>
+            <Button 
+              cta 
+              onClick={() => {
+                console.log('Add Server button clicked from selection state!');
+                setShowAddServerModal(true);
+              }}
+            >
+              <Plus size={16} className="mr-2" />
+              Добавить сервер
+            </Button>
+          </div>
+        </div>
+        
+        {/* Modals */}
+        {showAddServerModal && (
+          <Portal>
+            <AddServerModal
+              onClose={() => setShowAddServerModal(false)}
+              onSuccess={() => {
+                // Data will be updated via servers_event
+              }}
+            />
+          </Portal>
+        )}
+      </>
+    );
+  }
   // Server view (when server is selected but no service)
   if (selectedServer && !selectedService) {
     return (
@@ -151,7 +234,16 @@ export default function ServerManagement() {
 
         {/* Services List */}
         <div className="glass-panel rounded-2xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Services</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-white">Services</h3>
+            <button
+              onClick={() => setShowAddServiceModal(true)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 transition-colors text-sm font-medium"
+            >
+              <Plus size={16} />
+              Add Service
+            </button>
+          </div>
           <div className="space-y-3">
             {selectedServer.services.map((service) => {
               const isConnected = connected_services.includes(service.id);
@@ -309,6 +401,30 @@ export default function ServerManagement() {
             Connected since {new Date().toLocaleTimeString()}
           </div>
         </div>
+      )}
+      
+      {/* Modals */}
+      {showAddServiceModal && selectedServer && (
+        <Portal>
+          <AddServiceModal
+            serverId={selectedServer.id}
+            serverName={selectedServer.name}
+            onClose={() => setShowAddServiceModal(false)}
+            onSuccess={() => {
+              // Data will be updated via servers_event
+            }}
+          />
+        </Portal>
+      )}
+      {showAddServerModal && (
+        <Portal>
+          <AddServerModal
+            onClose={() => setShowAddServerModal(false)}
+            onSuccess={() => {
+              // Data will be updated via servers_event
+            }}
+          />
+        </Portal>
       )}
     </div>
   );
