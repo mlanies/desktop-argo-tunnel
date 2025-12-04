@@ -8,14 +8,21 @@ import { useTranslation } from "react-i18next";
 interface AddServerModalProps {
   onClose: () => void;
   onSuccess: () => void;
+  initialData?: {
+    id: string;
+    name: string;
+    description?: string;
+  };
 }
 
-export default function AddServerModal({ onClose, onSuccess }: AddServerModalProps) {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+export default function AddServerModal({ onClose, onSuccess, initialData }: AddServerModalProps) {
+  const [name, setName] = useState(initialData?.name || "");
+  const [description, setDescription] = useState(initialData?.description || "");
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
   const { t } = useTranslation();
+
+  const isEditing = !!initialData;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,15 +34,24 @@ export default function AddServerModal({ onClose, onSuccess }: AddServerModalPro
 
     setIsLoading(true);
     try {
-      await invoke("add_server", { 
-        name: name.trim(), 
-        description: description.trim() || null 
-      });
-      toast.success(`${t('modals.addServer.title')} "${name}" ${t('success.serverAdded')}`);
+      if (isEditing && initialData) {
+        await invoke("update_server", { 
+          serverId: initialData.id,
+          name: name.trim(), 
+          description: description.trim() || null 
+        });
+        toast.success(`${t('modals.addServer.title')} "${name}" ${t('success.updated')}`);
+      } else {
+        await invoke("add_server", { 
+          name: name.trim(), 
+          description: description.trim() || null 
+        });
+        toast.success(`${t('modals.addServer.title')} "${name}" ${t('success.serverAdded')}`);
+      }
       onSuccess();
       onClose();
     } catch (error) {
-      console.error("Failed to add server:", error);
+      console.error("Failed to save server:", error);
       toast.error(`${t('errors.generic')}: ${error}`);
     } finally {
       setIsLoading(false);
@@ -47,7 +63,9 @@ export default function AddServerModal({ onClose, onSuccess }: AddServerModalPro
       <div className="glass-panel rounded-2xl w-full max-w-md mx-4 animate-scale-in">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/10">
-          <h2 className="text-2xl font-bold text-white">{t('modals.addServer.title')}</h2>
+          <h2 className="text-2xl font-bold text-white">
+            {isEditing ? t('common.edit') : t('modals.addServer.title')}
+          </h2>
           <button
             onClick={onClose}
             className="p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
@@ -87,11 +105,13 @@ export default function AddServerModal({ onClose, onSuccess }: AddServerModalPro
             />
           </div>
 
-          <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
-            <p className="text-sm text-blue-300">
-              {t('modals.addServer.note')}
-            </p>
-          </div>
+          {!isEditing && (
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
+              <p className="text-sm text-blue-300">
+                {t('modals.addServer.note')}
+              </p>
+            </div>
+          )}
 
           {/* Footer */}
           <div className="flex items-center justify-end gap-3 pt-4">
@@ -99,7 +119,7 @@ export default function AddServerModal({ onClose, onSuccess }: AddServerModalPro
               {t('common.cancel')}
             </Button>
             <Button cta type="submit" disabled={isLoading}>
-              {isLoading ? t('modals.addServer.adding') : t('modals.addServer.addButton')}
+              {isLoading ? t('common.loading') : (isEditing ? t('common.save') : t('modals.addServer.addButton'))}
             </Button>
           </div>
         </form>

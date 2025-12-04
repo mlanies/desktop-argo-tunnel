@@ -169,25 +169,44 @@
   "modals": {
     "addServer": {
       "title": "Добавить сервер",
-      "serverName": "Название сервера",
-      "serverNamePlaceholder": "Мой сервер",
-      "description": "Описание (необязательно)",
-      "descriptionPlaceholder": "Продакшн сервер",
-      "note": "Сервер будет добавлен в группу \"Локальные серверы\"",
-      "adding": "Добавление...",
-      "addButton": "Добавить сервер",
-      "required": "обязательно"
+      "nameLabel": "Название сервера",
+      "namePlaceholder": "Например: Production Server",
+      "descLabel": "Описание",
+      "descPlaceholder": "Дополнительная информация о сервере",
+      "cancel": "Отмена",
+      "add": "Добавить сервер"
     },
     "addService": {
       "title": "Добавить сервис",
-      "to": "к",
-      "protocol": "Протокол",
-      "host": "Хост",
-      "hostPlaceholder": "example.com или 192.168.1.100",
-      "port": "Порт",
-      "adding": "Добавление...",
-      "addButton": "Добавить сервис",
-      "required": "обязательно"
+      "protocolLabel": "Протокол",
+      "hostLabel": "Хост",
+      "hostPlaceholder": "localhost",
+      "portLabel": "Порт",
+      "portPlaceholder": "8080",
+      "cancel": "Отмена",
+      "add": "Добавить сервис"
     }
+  },
+  "serverManagement": {
+    "servers": "Серверы",
+    "noServers": "Нет серверов",
+    "addServer": "Добавить сервер",
+    "addServerDesc": "Добавьте сервер для начала работы с подключениями",
+    "selectServer": "Выберите сервер",
+    "selectServerDesc": "Выберите сервер из списка слева для просмотра деталей",
+    "services": "Сервисы",
+    "addService": "Добавить сервис",
+    "serviceConfigured": "сервис настроен",
+    "servicesConfigured": "сервисов настроено",
+    "connectionStatus": "Статус подключения",
+    "serviceDetails": "Детали сервиса",
+    "recentActivity": "Недавняя активность",
+    "connectedSince": "Подключено с",
+    "protocol": "Протокол",
+    "host": "Хост",
+    "localPort": "Локальный порт",
+    "serviceId": "ID сервиса",
+    "notConfigured": "Не настроено",
+    "notConnected": "Не подключено"
   }
 }

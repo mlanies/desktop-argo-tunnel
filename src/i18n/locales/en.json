@@ -162,25 +162,44 @@
   "modals": {
     "addServer": {
       "title": "Add Server",
-      "serverName": "Server Name",
-      "serverNamePlaceholder": "My Server",
-      "description": "Description (Optional)",
-      "descriptionPlaceholder": "Production server",
-      "note": "Server will be added to \"Local Servers\" group",
-      "adding": "Adding...",
-      "addButton": "Add Server",
-      "required": "required"
+      "nameLabel": "Server Name",
+      "namePlaceholder": "e.g. Production Server",
+      "descLabel": "Description",
+      "descPlaceholder": "Additional server info",
+      "cancel": "Cancel",
+      "add": "Add Server"
     },
     "addService": {
       "title": "Add Service",
-      "to": "to",
-      "protocol": "Protocol",
-      "host": "Host",
-      "hostPlaceholder": "example.com or 192.168.1.100",
-      "port": "Port",
-      "adding": "Adding...",
-      "addButton": "Add Service",
-      "required": "required"
+      "protocolLabel": "Protocol",
+      "hostLabel": "Host",
+      "hostPlaceholder": "localhost",
+      "portLabel": "Port",
+      "portPlaceholder": "8080",
+      "cancel": "Cancel",
+      "add": "Add Service"
     }
+  },
+  "serverManagement": {
+    "servers": "Servers",
+    "noServers": "No servers",
+    "addServer": "Add Server",
+    "addServerDesc": "Add a server to start working with connections",
+    "selectServer": "Select Server",
+    "selectServerDesc": "Select a server from the list on the left to view details",
+    "services": "Services",
+    "addService": "Add Service",
+    "serviceConfigured": "service configured",
+    "servicesConfigured": "services configured",
+    "connectionStatus": "Connection Status",
+    "serviceDetails": "Service Details",
+    "recentActivity": "Recent Activity",
+    "connectedSince": "Connected since",
+    "protocol": "Protocol",
+    "host": "Host",
+    "localPort": "Local Port",
+    "serviceId": "Service ID",
+    "notConfigured": "Not configured",
+    "notConnected": "Not connected"
   }
 }

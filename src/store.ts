@@ -64,6 +64,10 @@ type Actions = {
   addRecentConnection: (connection: RecentConnection) => void;
   toggleFavorite: (serviceId: string) => void;
   updateSettings: (settings: Partial<AppSettings>) => void;
+  
+  // Server Actions
+  deleteServer: (id: string) => Promise<void>;
+  updateServer: (id: string, name: string, description?: string) => Promise<void>;
 };
 
 export const useStore = create<State & Actions>()(
@@ -212,6 +216,24 @@ export const useStore = create<State & Actions>()(
           localStorage.setItem('language', settings.language);
         }
       });
+    },
+
+    deleteServer: async (id: string) => {
+      try {
+        await invoke('delete_server', { serverId: id });
+      } catch (error) {
+        console.error('Failed to delete server:', error);
+        throw error;
+      }
+    },
+
+    updateServer: async (id: string, name: string, description?: string) => {
+      try {
+        await invoke('update_server', { serverId: id, name, description });
+      } catch (error) {
+        console.error('Failed to update server:', error);
+        throw error;
+      }
     },
   })),
 );
