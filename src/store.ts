@@ -36,6 +36,25 @@ export interface AppSettings {
   logLevel: 'debug' | 'info' | 'warn' | 'error';
 }
 
+type State = {
+  services_by_server_by_company: ErasedServiceCompanies;
+  expanded_companies: string[];
+  connected_services: string[];
+  selectedServerId: string | null;
+  selectedServiceId: string | null;
+  credentialsByServiceId: Record<string, Credential>;
+  view_service_credential?: {
+    service: string;
+    remember: boolean;
+    credential: Credential | null;
+  };
+  tunnels: Tunnel[];
+  recentConnections: RecentConnection[];
+  favorites: string[];
+  activeTab: string;
+  settings: AppSettings;
+};
+
 type Actions = {
   // ... existing actions
   handleServicesByServersByCompanyChange: (
@@ -68,10 +87,13 @@ type Actions = {
   // Server Actions
   deleteServer: (id: string) => Promise<void>;
   updateServer: (id: string, name: string, description?: string) => Promise<void>;
+  deleteService: (serviceId: string, serverId: string) => Promise<void>;
+  addService: (serverId: string, service: any) => Promise<void>;
+  updateService: (serverId: string, serviceId: string, data: Partial<any>) => Promise<void>;
 };
 
 export const useStore = create<State & Actions>()(
-  immer((set, get) => ({
+  immer((set, _get) => ({
     // ... initial state
     services_by_server_by_company: [],
     expanded_companies: [],
@@ -192,6 +214,110 @@ export const useStore = create<State & Actions>()(
       }
     },
     
+    deleteServer: async (id: string) => {
+      console.log('Store: deleteServer called for id:', id);
+      try {
+        // First update the UI state using direct mutation
+        set((state) => {
+          console.log('Store: Inside set callback');
+          console.log('Store: Companies count:', state.services_by_server_by_company.length);
+          
+          state.services_by_server_by_company.forEach((company: any) => {
+            console.log('Store: Checking company:', company.id, 'Servers:', company.servers.length);
+            const index = company.servers.findIndex((s: any) => {
+              const match = String(s.id) === String(id);
+              console.log(`Store: Comparing server ${s.id} (${typeof s.id}) with ${id} (${typeof id}) -> match: ${match}`);
+              return match;
+            });
+            
+            if (index !== -1) {
+              console.log('Store: Found server to delete at index:', index, 'Removing...');
+              company.servers.splice(index, 1);
+              console.log('Store: Server removed from array');
+            } else {
+              console.log('Store: Server not found in this company');
+            }
+          });
+        });
+
+        // Then call backend
+        console.log('Store: Calling backend delete_server...');
+        await invoke('delete_server', { serverId: id });
+        console.log('Store: Backend delete_server successful');
+      } catch (error) {
+        console.error('Store: Failed to delete server:', error);
+        throw error;
+      }
+    },
+
+    deleteService: async (serviceId: string, serverId: string) => {
+      try {
+        await invoke('delete_service', { serviceId, serverId });
+        
+        set((state) => {
+          state.services_by_server_by_company.forEach((company: any) => {
+            const server = company.servers.find((s: any) => String(s.id) === String(serverId));
+            if (server) {
+              server.services = server.services.filter((s: any) => s.id !== serviceId);
+            }
+          });
+        });
+      } catch (error) {
+        console.error('Failed to delete service:', error);
+        throw error;
+      }
+    },
+
+    updateServer: async (id: string, name: string, description?: string) => {
+      try {
+        await invoke('update_server', { serverId: id, name, description });
+        set((state) => {
+          state.services_by_server_by_company.forEach((company: any) => {
+            const server = company.servers.find((s: any) => String(s.id) === String(id));
+            if (server) {
+              server.name = name;
+              server.description = description;
+            }
+          });
+        });
+      } catch (error) {
+        console.error('Failed to update server:', error);
+        throw error;
+      }
+    },
+
+    addService: async (serverId: string, service: any) => {
+      try {
+        await invoke('add_service', { serverId, service });
+        // Refresh data from backend usually happens via event or manual reload
+        // But we can optimistically add it if we had the full service object with ID
+        // For now, let's assume the backend event will update the list or we rely on reload
+      } catch (error) {
+        console.error('Failed to add service:', error);
+        throw error;
+      }
+    },
+
+    updateService: async (serverId: string, serviceId: string, data: Partial<any>) => {
+      try {
+        await invoke('update_service', { serverId, serviceId, ...data });
+        set((state) => {
+          state.services_by_server_by_company.forEach((company: any) => {
+            const server = company.servers.find((s: any) => String(s.id) === String(serverId));
+            if (server) {
+              const service = server.services.find((s: any) => s.id === serviceId);
+              if (service) {
+                Object.assign(service, data);
+              }
+            }
+          });
+        });
+      } catch (error) {
+        console.error('Failed to update service:', error);
+        throw error;
+      }
+    },
+
     addRecentConnection: (connection: RecentConnection) => {
       set((state) => {
         state.recentConnections = [connection, ...state.recentConnections].slice(0, 10);
@@ -216,24 +342,6 @@ export const useStore = create<State & Actions>()(
           localStorage.setItem('language', settings.language);
         }
       });
-    },
-
-    deleteServer: async (id: string) => {
-      try {
-        await invoke('delete_server', { serverId: id });
-      } catch (error) {
-        console.error('Failed to delete server:', error);
-        throw error;
-      }
-    },
-
-    updateServer: async (id: string, name: string, description?: string) => {
-      try {
-        await invoke('update_server', { serverId: id, name, description });
-      } catch (error) {
-        console.error('Failed to update server:', error);
-        throw error;
-      }
     },
   })),
 );

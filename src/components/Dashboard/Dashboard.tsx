@@ -13,8 +13,8 @@ import Button from "../Button/Button";
 import { useStore } from "../../store";
 import { formatDistanceToNow } from "date-fns";
 import { enUS, ru } from "date-fns/locale";
-import { useState } from "react";
-import AddServerModal from "../Servers/AddServerModal";
+import { useState, useMemo, useCallback } from "react";
+import AddServerWizard from "../Servers/AddServerWizard";
 import Portal from "../Portal";
 
 export default function Dashboard() {
@@ -29,15 +29,45 @@ export default function Dashboard() {
 
   const [showAddServerModal, setShowAddServerModal] = useState(false);
 
-  // Calculate real statistics
-  const totalServers = services_by_server_by_company.reduce(
-    (acc, company) => acc + company.servers.length, 
-    0
+  // Memoize expensive calculations
+  const totalServers = useMemo(() => 
+    services_by_server_by_company.reduce(
+      (acc, company) => acc + company.servers.length, 
+      0
+    ),
+    [services_by_server_by_company]
   );
-  const activeConnections = connected_services.length;
-  const activeTunnels = tunnels.filter(t => t.status === 'active').length;
 
-  const locale = i18n.language === 'ru' ? ru : enUS;
+  const activeConnections = useMemo(() => 
+    connected_services.length,
+    [connected_services]
+  );
+
+  const activeTunnels = useMemo(() => 
+    tunnels.filter(t => t.status === 'active').length,
+    [tunnels]
+  );
+
+  const locale = useMemo(() => 
+    i18n.language === 'ru' ? ru : enUS,
+    [i18n.language]
+  );
+
+  const handleViewLogs = useCallback(() => {
+    setActiveTab('active-connections');
+  }, [setActiveTab]);
+
+  const handleAddServer = useCallback(() => {
+    setShowAddServerModal(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setShowAddServerModal(false);
+  }, []);
+
+  const handleViewAll = useCallback(() => {
+    setActiveTab('servers');
+  }, [setActiveTab]);
 
   return (
     <div className="flex flex-col h-full overflow-y-auto custom-scrollbar p-6 space-y-8">
@@ -51,16 +81,18 @@ export default function Dashboard() {
           <Button 
             variant="secondary" 
             size="sm"
-            onClick={() => setActiveTab('active-connections')}
+            onClick={handleViewLogs}
+            ariaLabel={t('dashboard.viewLogs')}
           >
             {t('dashboard.viewLogs')}
           </Button>
           <Button 
             cta 
             size="sm"
-            onClick={() => setShowAddServerModal(true)}
+            onClick={handleAddServer}
+            ariaLabel={t('dashboard.addServer')}
           >
-            <Plus size={16} className="mr-2" />
+            <Plus size={16} className="mr-2" aria-hidden="true" />
             {t('dashboard.addServer')}
           </Button>
         </div>
@@ -73,18 +105,21 @@ export default function Dashboard() {
           value={totalServers}
           icon={<Server size={24} />}
           gradient="primary"
+          onClick={() => setActiveTab('servers')}
         />
         <StatsCard
           title={t('dashboard.stats.activeConnections')}
           value={activeConnections}
           icon={<Activity size={24} />}
           gradient="success"
+          onClick={() => setActiveTab('active-connections')}
         />
         <StatsCard
-          title="Active Tunnels"
+          title={t('dashboard.activeTunnels')}
           value={activeTunnels}
-          icon={<Clock size={24} />}
+          icon={<Activity size={24} className="text-purple-400" />}
           gradient="warning"
+          onClick={() => setActiveTab('active-connections')}
         />
       </div>
 
@@ -93,10 +128,12 @@ export default function Dashboard() {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-semibold text-white">{t('dashboard.recentConnections')}</h2>
           <button 
-            onClick={() => setActiveTab('servers')}
-            className="text-sm text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1"
+            onClick={handleViewAll}
+            className="flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors"
+            aria-label={t('common.viewAll')}
           >
-            View all <ArrowRight size={14} />
+            <span>{t('common.viewAll')}</span>
+            <ArrowRight size={16} aria-hidden="true" />
           </button>
         </div>
 
@@ -144,11 +181,9 @@ export default function Dashboard() {
       {/* Modals */}
       {showAddServerModal && (
         <Portal>
-          <AddServerModal
-            onClose={() => setShowAddServerModal(false)}
-            onSuccess={() => {
-              // Data will be updated via servers_event
-            }}
+          <AddServerWizard
+            onClose={handleCloseModal}
+            onSuccess={handleCloseModal}
           />
         </Portal>
       )}

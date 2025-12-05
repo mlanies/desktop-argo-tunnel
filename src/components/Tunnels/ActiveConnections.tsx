@@ -28,7 +28,7 @@ export default function ActiveConnections() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white mb-1">{t('nav.activeConnections')}</h1>
-          <p className="text-gray-400 text-sm">Manage active local TCP tunnels</p>
+          <p className="text-gray-400 text-sm">{t('tunnels.manageActiveTunnels')}</p>
         </div>
       </div>
 
@@ -39,9 +39,9 @@ export default function ActiveConnections() {
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-500/10 flex items-center justify-center">
               <Network size={32} className="text-blue-400" />
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2">No Active Connections</h3>
+            <h3 className="text-lg font-semibold text-white mb-2">{t('tunnels.noActiveConnections')}</h3>
             <p className="text-gray-400 mb-6">
-              Connect to a service from the Server Management tab to start a tunnel.
+              {t('tunnels.noActiveConnectionsDesc')}
             </p>
           </div>
         </div>

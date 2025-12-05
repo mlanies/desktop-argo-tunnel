@@ -16,7 +16,7 @@ export default function Settings() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-white mb-1">{t('settings.title')}</h1>
-        <p className="text-gray-400 text-sm">Configure your application preferences</p>
+        <p className="text-gray-400 text-sm">{t('settings.description')}</p>
       </div>
 
       {/* Settings Sections */}
@@ -37,7 +37,7 @@ export default function Settings() {
                 <Globe size={18} className="text-gray-400" />
                 <div>
                   <div className="text-white font-medium">{t('settings.language')}</div>
-                  <div className="text-sm text-gray-500">Choose your preferred language</div>
+                  <div className="text-sm text-gray-500">{t('settings.languageDesc')}</div>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -70,7 +70,7 @@ export default function Settings() {
                 <Palette size={18} className="text-gray-400" />
                 <div>
                   <div className="text-white font-medium">{t('settings.theme')}</div>
-                  <div className="text-sm text-gray-500">Application appearance</div>
+                  <div className="text-sm text-gray-500">{t('settings.themeDesc')}</div>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -82,7 +82,7 @@ export default function Settings() {
                       : 'bg-white/5 text-gray-400 hover:bg-white/10'
                   }`}
                 >
-                  Dark
+                  {t('settings.themeDark')}
                 </button>
                 <button
                   onClick={() => updateSettings({ theme: 'light' })}
@@ -92,7 +92,7 @@ export default function Settings() {
                       : 'bg-white/5 text-gray-400 hover:bg-white/10'
                   }`}
                 >
-                  Light
+                  {t('settings.themeLight')}
                 </button>
                 <button
                   onClick={() => updateSettings({ theme: 'system' })}
@@ -102,7 +102,7 @@ export default function Settings() {
                       : 'bg-white/5 text-gray-400 hover:bg-white/10'
                   }`}
                 >
-                  System
+                  {t('settings.themeSystem')}
                 </button>
               </div>
             </div>
@@ -113,7 +113,7 @@ export default function Settings() {
                 <Network size={18} className="text-gray-400" />
                 <div>
                   <div className="text-white font-medium">{t('settings.autoConnect')}</div>
-                  <div className="text-sm text-gray-500">Automatically connect on startup</div>
+                  <div className="text-sm text-gray-500">{t('settings.autoConnectDesc')}</div>
                 </div>
               </div>
               <label className="switch">
@@ -149,7 +149,7 @@ export default function Settings() {
                 className="input w-full"
               />
               <p className="text-xs text-gray-500 mt-2">
-                Path to cloudflared binary. Leave empty to use system default.
+                {t('settings.binaryPathDesc')}
               </p>
             </div>
 

@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useId } from "react";
 import { X } from "lucide-react";
 import Button from "../Button/Button";
 import { useToast } from "../../hooks/useToast";
 import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
+import { FocusTrap } from "../FocusTrap";
 
 interface AddServerModalProps {
   onClose: () => void;
@@ -21,6 +22,7 @@ export default function AddServerModal({ onClose, onSuccess, initialData }: AddS
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
   const { t } = useTranslation();
+  const titleId = useId();
 
   const isEditing = !!initialData;
 
@@ -59,28 +61,40 @@ export default function AddServerModal({ onClose, onSuccess, initialData }: AddS
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[9999] animate-fade-in">
-      <div className="glass-panel rounded-2xl w-full max-w-md mx-4 animate-scale-in">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
-          <h2 className="text-2xl font-bold text-white">
-            {isEditing ? t('common.edit') : t('modals.addServer.title')}
-          </h2>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
-          >
-            <X size={20} />
-          </button>
-        </div>
+    <div 
+      className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[9999] animate-fade-in"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
+    >
+      <FocusTrap active onEscape={onClose}>
+        <div 
+          className="glass-panel rounded-2xl w-full max-w-md mx-4 animate-scale-in"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-white/10">
+            <h2 id={titleId} className="text-2xl font-bold text-white">
+              {isEditing ? t('common.edit') : t('modals.addServer.title')}
+            </h2>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
+              aria-label={t('common.close') || 'Close'}
+            >
+              <X size={20} aria-hidden="true" />
+            </button>
+          </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="server-name" className="block text-sm font-medium text-gray-300 mb-2">
               {t('modals.addServer.serverName')} <span className="text-red-400">*</span>
             </label>
             <input
+              id="server-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -88,14 +102,17 @@ export default function AddServerModal({ onClose, onSuccess, initialData }: AddS
               className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 transition-colors"
               disabled={isLoading}
               autoFocus
+              required
+              aria-required="true"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="server-description" className="block text-sm font-medium text-gray-300 mb-2">
               {t('modals.addServer.description')}
             </label>
             <textarea
+              id="server-description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder={t('modals.addServer.descriptionPlaceholder')}
@@ -124,6 +141,7 @@ export default function AddServerModal({ onClose, onSuccess, initialData }: AddS
           </div>
         </form>
       </div>
+    </FocusTrap>
     </div>
   );
 }

@@ -12,6 +12,7 @@ interface ButtonProps extends React.DetailedHTMLProps<
   loading?: boolean;
   icon?: React.ReactNode;
   iconPosition?: 'left' | 'right';
+  ariaLabel?: string;
 }
 
 export default function Button({
@@ -24,6 +25,7 @@ export default function Button({
   iconPosition = 'left',
   className: propsClassName,
   disabled,
+  ariaLabel,
   ...props
 }: ButtonProps) {
   const className = classNames(
@@ -44,6 +46,8 @@ export default function Button({
       {...props} 
       className={className}
       disabled={isDisabled}
+      aria-label={ariaLabel}
+      aria-busy={loading}
     >
       {loading && (
         <svg 
@@ -69,13 +73,13 @@ export default function Button({
       )}
       
       {!loading && icon && iconPosition === 'left' && (
-        <span className="mr-2">{icon}</span>
+        <span className="mr-2" aria-hidden="true">{icon}</span>
       )}
       
       {children}
       
       {!loading && icon && iconPosition === 'right' && (
-        <span className="ml-2">{icon}</span>
+        <span className="ml-2" aria-hidden="true">{icon}</span>
       )}
     </button>
   );

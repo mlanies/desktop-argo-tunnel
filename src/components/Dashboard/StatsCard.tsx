@@ -11,6 +11,7 @@ interface StatsCardProps {
   };
   className?: string;
   gradient?: "primary" | "success" | "warning" | "info";
+  onClick?: () => void;
 }
 
 export default function StatsCard({
@@ -19,7 +20,8 @@ export default function StatsCard({
   icon,
   trend,
   className,
-  gradient = "primary"
+  gradient = "primary",
+  onClick
 }: StatsCardProps) {
   const gradientClasses = {
     primary: "from-blue-500/20 to-purple-500/20 text-blue-400",
@@ -28,11 +30,19 @@ export default function StatsCard({
     info: "from-cyan-500/20 to-blue-500/20 text-cyan-400"
   };
 
+  const CardWrapper = onClick ? 'button' : 'div';
+  const clickableClasses = onClick ? 'cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-transform' : '';
+
   return (
-    <div className={classNames(
-      "glass-card rounded-2xl p-5 relative overflow-hidden group",
-      className
-    )}>
+    <CardWrapper 
+      className={classNames(
+        "glass-card rounded-2xl p-5 relative overflow-hidden group w-full text-left",
+        clickableClasses,
+        className
+      )}
+      onClick={onClick}
+      type={onClick ? "button" : undefined}
+    >
       <div className="flex justify-between items-start mb-4">
         <div className={classNames(
           "p-3 rounded-xl bg-gradient-to-br",
@@ -60,6 +70,6 @@ export default function StatsCard({
         "absolute -right-4 -bottom-4 w-24 h-24 rounded-full blur-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-500 bg-gradient-to-br",
         gradientClasses[gradient]
       )} />
-    </div>
+    </CardWrapper>
   );
 }
