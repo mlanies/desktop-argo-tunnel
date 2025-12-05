@@ -1,14 +1,17 @@
 import { X, AlertCircle, Download } from "lucide-react";
 import Button from "./Button/Button";
+import { useTranslation } from "react-i18next";
 
 interface CloudflaredCheckModalProps {
   onRetry: () => void;
   onClose: () => void;
   onInstall: () => Promise<void>;
   isInstalling: boolean;
+  onGoToSettings?: () => void;
 }
 
-export default function CloudflaredCheckModal({ onRetry, onClose, onInstall, isInstalling }: CloudflaredCheckModalProps) {
+export default function CloudflaredCheckModal({ onRetry, onClose, onInstall, isInstalling, onGoToSettings }: CloudflaredCheckModalProps) {
+  const { t } = useTranslation();
 
   const installInstructions = {
     macos: {
@@ -114,17 +117,25 @@ export default function CloudflaredCheckModal({ onRetry, onClose, onInstall, isI
           <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
             <p className="text-sm text-blue-300">
               <strong>Note:</strong> After installation, you may need to restart this application or click "Retry" below.
+              {onGoToSettings && <> You can also go to Settings to install cloudflared.</>}
             </p>
           </div>
         </div>
 
         {/* Footer */}
         <div className="flex items-center justify-between p-6 border-t border-white/10">
-          <Button variant="secondary" onClick={onClose}>
-            Continue Anyway
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="secondary" onClick={onClose}>
+              {t('common.cancel')}
+            </Button>
+            {onGoToSettings && (
+              <Button variant="secondary" onClick={onGoToSettings}>
+                {t('common.goToSettings')}
+              </Button>
+            )}
+          </div>
           <Button onClick={onRetry}>
-            Retry Check
+            {t('common.confirm')}
           </Button>
         </div>
       </div>

@@ -168,6 +168,10 @@ function RootComponent() {
           onClose={() => setShowCloudflaredModal(false)}
           onInstall={installCloudflared}
           isInstalling={isInstallingCloudflared}
+          onGoToSettings={() => {
+            setShowCloudflaredModal(false);
+            window.location.hash = '#/settings';
+          }}
         />
       )}
       {showUpdateModal && cloudflaredVersion && cloudflaredLatestVersion && (

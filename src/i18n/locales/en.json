@@ -20,7 +20,8 @@
     "warning": "Warning",
     "info": "Info",
     "viewAll": "View all",
-    "install": "Install"
+    "install": "Install",
+    "goToSettings": "Go to Settings"
   },
   "nav": {
     "dashboard": "Dashboard",
