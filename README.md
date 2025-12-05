@@ -6,6 +6,8 @@
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey)]()
 [![Built with Tauri](https://img.shields.io/badge/built%20with-Tauri-24C8DB)]()
 
+<a href="https://www.producthunt.com/products/desktop-cloudflare-tunnel-ui?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-desktop&#0045;cloudflare&#0045;tunnel&#0045;ui" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1046645&theme=dark&t=1764960674909" alt="Desktop&#0032;Cloudflare&#0032;Tunnel&#0032;UI - One&#0045;click&#0032;GUI&#0032;for&#0032;Cloudflare&#0032;RDP&#0044;&#0032;SSH&#0032;&#0038;&#0032;TCP&#0032;tunnels | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+
 ## Overview
 
 **Desktop Argo Tunnel Manager** is a desktop application that provides a graphical interface for managing `cloudflared access` connections. Connect to remote services (SSH, RDP, TCP) through Cloudflare's secure network with automatic local port forwarding.
@@ -231,6 +233,11 @@ This application provides a GUI for the following `cloudflared` commands:
 - Ensure `cloudflared` has necessary permissions
 
 For more help, see [docs/USER_GUIDE.md](docs/USER_GUIDE.md)
+
+## Planned Features
+- **Native RDP Integration**: Automatically launch `mstsc` (Remote Desktop Connection) with the target host pre-configured upon connection.
+- **Native SSH Integration**: Automatically launch `putty` with the target host pre-configured for SSH connections.
+- **Credential Management**: Securely save and auto-fill login credentials (username, password, domain) for both `mstsc` and `putty` sessions.
 
 ## Contributing
 
