@@ -53,6 +53,10 @@ type State = {
   favorites: string[];
   activeTab: string;
   settings: AppSettings;
+  cloudflaredVersion: string | null;
+  isInstallingCloudflared: boolean;
+  cloudflaredLatestVersion: string | null;
+  isUpdatingCloudflared: boolean;
 };
 
 type Actions = {
@@ -90,10 +94,17 @@ type Actions = {
   deleteService: (serviceId: string, serverId: string) => Promise<void>;
   addService: (serverId: string, service: any) => Promise<void>;
   updateService: (serverId: string, serviceId: string, data: Partial<any>) => Promise<void>;
+  
+  // Cloudflared Actions
+  checkCloudflared: () => Promise<void>;
+  installCloudflared: () => Promise<void>;
+  checkForCloudflaredUpdate: () => Promise<void>;
+  updateCloudflared: () => Promise<void>;
+  stopAllTunnels: () => Promise<void>;
 };
 
 export const useStore = create<State & Actions>()(
-  immer((set, _get) => ({
+  immer((set, get) => ({
     // ... initial state
     services_by_server_by_company: [],
     expanded_companies: [],
@@ -112,6 +123,10 @@ export const useStore = create<State & Actions>()(
       autoConnect: false,
       logLevel: 'info',
     },
+    cloudflaredVersion: null,
+    isInstallingCloudflared: false,
+    cloudflaredLatestVersion: null,
+    isUpdatingCloudflared: false,
 
     // ... existing handlers
     handleServicesByServersByCompanyChange: (
@@ -184,9 +199,104 @@ export const useStore = create<State & Actions>()(
       });
     },
     
+    // Cloudflared Actions
+    checkCloudflared: async () => {
+      try {
+        const version = await invoke<string>('check_cloudflared_version');
+        set((state) => {
+          state.cloudflaredVersion = version;
+        });
+      } catch (error) {
+        console.log('Cloudflared not found or error:', error);
+        set((state) => {
+          state.cloudflaredVersion = null;
+        });
+      }
+    },
+
+    installCloudflared: async () => {
+      set((state) => {
+        state.isInstallingCloudflared = true;
+      });
+      try {
+        await invoke('install_cloudflared');
+        // Check version again to confirm installation
+        const version = await invoke<string>('check_cloudflared_version');
+        set((state) => {
+          state.cloudflaredVersion = version;
+          state.isInstallingCloudflared = false;
+        });
+      } catch (error) {
+        console.error('Failed to install cloudflared:', error);
+        set((state) => {
+          state.isInstallingCloudflared = false;
+        });
+        throw error;
+      }
+    },
+
+    checkForCloudflaredUpdate: async () => {
+      try {
+        const latestVersion = await invoke<string>('get_latest_cloudflared_version');
+        set((state) => {
+          state.cloudflaredLatestVersion = latestVersion;
+        });
+      } catch (error) {
+        console.error('Failed to check for cloudflared updates:', error);
+      }
+    },
+
+    stopAllTunnels: async () => {
+      const tunnels = get().tunnels;
+      for (const tunnel of tunnels) {
+        try {
+          await invoke('stop_tcp_tunnel', { id: tunnel.id });
+        } catch (error) {
+          console.error(`Failed to stop tunnel ${tunnel.id}:`, error);
+        }
+      }
+      set((state) => {
+        state.tunnels = [];
+      });
+    },
+
+    updateCloudflared: async () => {
+      set((state) => {
+        state.isUpdatingCloudflared = true;
+      });
+      try {
+        // Stop all active tunnels first
+        await get().stopAllTunnels();
+        
+        // Install/update cloudflared
+        await invoke('install_cloudflared');
+        
+        // Check version again to confirm update
+        const version = await invoke<string>('check_cloudflared_version');
+        set((state) => {
+          state.cloudflaredVersion = version;
+          state.cloudflaredLatestVersion = null;
+          state.isUpdatingCloudflared = false;
+        });
+      } catch (error) {
+        console.error('Failed to update cloudflared:', error);
+        set((state) => {
+          state.isUpdatingCloudflared = false;
+        });
+        throw error;
+      }
+    },
+    
+    
     // Async TCP Tunnel Implementation
     startTcpTunnel: async (hostname: string, localPort: number) => {
       try {
+        // Auto-install if not present
+        if (!get().cloudflaredVersion) {
+            console.log('Cloudflared not found, attempting to install...');
+            await get().installCloudflared();
+        }
+
         const tunnel = await invoke<Tunnel>('start_tcp_tunnel', { hostname, localPort });
         set((state) => {
           state.tunnels.push({

@@ -4,9 +4,11 @@ import Button from "./Button/Button";
 interface CloudflaredCheckModalProps {
   onRetry: () => void;
   onClose: () => void;
+  onInstall: () => Promise<void>;
+  isInstalling: boolean;
 }
 
-export default function CloudflaredCheckModal({ onRetry, onClose }: CloudflaredCheckModalProps) {
+export default function CloudflaredCheckModal({ onRetry, onClose, onInstall, isInstalling }: CloudflaredCheckModalProps) {
 
   const installInstructions = {
     macos: {
@@ -53,8 +55,30 @@ export default function CloudflaredCheckModal({ onRetry, onClose }: CloudflaredC
         <div className="p-6 space-y-6">
           <p className="text-gray-300">
             This application requires <code className="bg-white/10 px-2 py-0.5 rounded text-blue-400">cloudflared</code> to be installed on your system.
-            Please install it using one of the methods below:
+            You can install it automatically or use one of the manual methods below:
           </p>
+
+          <div className="flex justify-center py-4">
+             <Button 
+                cta 
+                size="lg" 
+                onClick={onInstall} 
+                loading={isInstalling}
+                disabled={isInstalling}
+             >
+                <Download size={20} className="mr-2" />
+                {isInstalling ? 'Installing...' : 'Install Automatically'}
+             </Button>
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-white/10"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-[#1a1b26] text-gray-500">Or install manually</span>
+            </div>
+          </div>
 
           {/* Installation Instructions */}
           <div className="space-y-4">
@@ -99,7 +123,7 @@ export default function CloudflaredCheckModal({ onRetry, onClose }: CloudflaredC
           <Button variant="secondary" onClick={onClose}>
             Continue Anyway
           </Button>
-          <Button cta onClick={onRetry}>
+          <Button onClick={onRetry}>
             Retry Check
           </Button>
         </div>

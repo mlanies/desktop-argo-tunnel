@@ -15,6 +15,7 @@ import CommandPalette from '../components/CommandPalette/CommandPalette';
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import CloudflaredCheckModal from '../components/CloudflaredCheckModal';
+import CloudflaredUpdateModal from '../components/CloudflaredUpdateModal';
 
 
 export const Route = createRootRoute({
@@ -30,11 +31,19 @@ function RootComponent() {
     handleConnectedServicesChange,
     handleConnectService,
     handleDisconnectService,
+    installCloudflared,
+    isInstallingCloudflared,
+    checkForCloudflaredUpdate,
+    cloudflaredVersion,
+    cloudflaredLatestVersion,
+    updateCloudflared,
+    isUpdatingCloudflared,
+    tunnels,
   } = useStore();
 
   const [showCommandPalette, setShowCommandPalette] = useState(false);
-  const [cloudflaredInstalled, setCloudflaredInstalled] = useState(true);
   const [showCloudflaredModal, setShowCloudflaredModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   useEffect(() => {
     let unlisten: UnlistenFn[] = [];
@@ -116,16 +125,24 @@ function RootComponent() {
       try {
         const { invoke } = await import('@tauri-apps/api/core');
         await invoke('check_cloudflared_version');
-        setCloudflaredInstalled(true);
+        
+        // Check for updates
+        await checkForCloudflaredUpdate();
       } catch (error) {
         console.error('Cloudflared not found:', error);
-        setCloudflaredInstalled(false);
         setShowCloudflaredModal(true);
       }
     };
 
     checkCloudflared();
-  }, []);
+  }, [checkForCloudflaredUpdate]);
+
+  // Show update modal when update is available
+  useEffect(() => {
+    if (cloudflaredVersion && cloudflaredLatestVersion && cloudflaredVersion !== cloudflaredLatestVersion) {
+      setShowUpdateModal(true);
+    }
+  }, [cloudflaredVersion, cloudflaredLatestVersion]);
 
   return (
     <NotificationProvider>
@@ -143,13 +160,31 @@ function RootComponent() {
             try {
               const { invoke } = await import('@tauri-apps/api/core');
               await invoke('check_cloudflared_version');
-              setCloudflaredInstalled(true);
               setShowCloudflaredModal(false);
             } catch (error) {
               console.error('Cloudflared still not found');
             }
           }}
           onClose={() => setShowCloudflaredModal(false)}
+          onInstall={installCloudflared}
+          isInstalling={isInstallingCloudflared}
+        />
+      )}
+      {showUpdateModal && cloudflaredVersion && cloudflaredLatestVersion && (
+        <CloudflaredUpdateModal
+          currentVersion={cloudflaredVersion}
+          latestVersion={cloudflaredLatestVersion}
+          onUpdate={async () => {
+            try {
+              await updateCloudflared();
+              setShowUpdateModal(false);
+            } catch (error) {
+              console.error('Update failed:', error);
+            }
+          }}
+          onClose={() => setShowUpdateModal(false)}
+          isUpdating={isUpdatingCloudflared}
+          activeTunnelsCount={tunnels.length}
         />
       )}
       <Toaster />

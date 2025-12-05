@@ -55,6 +55,8 @@ use cloudflared::commands::{
     check_cloudflared_version,
     start_tcp_tunnel,
     stop_tcp_tunnel,
+    install_cloudflared,
+    get_latest_cloudflared_version,
 };
 
 use util::get_platform_info;
@@ -152,6 +154,8 @@ pub async fn run() {
             check_cloudflared_version,
             start_tcp_tunnel,
             stop_tcp_tunnel,
+            install_cloudflared,
+            get_latest_cloudflared_version,
         ])
         .build(tauri::generate_context!())
         .expect("error while running tauri application");

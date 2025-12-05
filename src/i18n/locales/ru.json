@@ -19,7 +19,8 @@
     "success": "Успешно",
     "warning": "Предупреждение",
     "info": "Информация",
-    "viewAll": "Показать все"
+    "viewAll": "Показать все",
+    "install": "Установить"
   },
   "nav": {
     "dashboard": "Панель управления",
@@ -168,7 +169,10 @@
     "proxySettings": "Настройки прокси",
     "timeout": "Таймаут подключения",
     "debugMode": "Режим отладки",
-    "experimentalFeatures": "Экспериментальные функции"
+    "experimentalFeatures": "Экспериментальные функции",
+    "cloudflaredVersion": "Версия Cloudflared",
+    "cloudflaredVersionDesc": "Текущая установленная версия cloudflared",
+    "notInstalled": "Не установлен"
   },
   "credentials": {
     "title": "Учетные данные",

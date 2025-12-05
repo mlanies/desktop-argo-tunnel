@@ -19,7 +19,8 @@
     "success": "Success",
     "warning": "Warning",
     "info": "Info",
-    "viewAll": "View all"
+    "viewAll": "View all",
+    "install": "Install"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -162,7 +163,10 @@
     "proxySettings": "Proxy Settings",
     "timeout": "Connection Timeout",
     "debugMode": "Debug Mode",
-    "experimentalFeatures": "Experimental Features"
+    "experimentalFeatures": "Experimental Features",
+    "cloudflaredVersion": "Cloudflared Version",
+    "cloudflaredVersionDesc": "Currently installed cloudflared version",
+    "notInstalled": "Not installed"
   },
   "credentials": {
     "title": "Credentials",

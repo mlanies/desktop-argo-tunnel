@@ -4,7 +4,7 @@ import { Globe, Palette, Zap, Terminal, Network } from "lucide-react";
 
 export default function Settings() {
   const { t, i18n } = useTranslation();
-  const { settings, updateSettings } = useStore();
+  const { settings, updateSettings, cloudflaredVersion, installCloudflared, isInstallingCloudflared } = useStore();
 
   const handleLanguageChange = (lang: 'en' | 'ru') => {
     i18n.changeLanguage(lang);
@@ -138,6 +138,34 @@ export default function Settings() {
           </div>
 
           <div className="space-y-4">
+            {/* Cloudflared Version */}
+            <div className="py-3 border-b border-white/5">
+              <div className="flex justify-between items-center">
+                <div>
+                  <div className="text-white font-medium">{t('settings.cloudflaredVersion')}</div>
+                  <div className="text-sm text-gray-500">{t('settings.cloudflaredVersionDesc')}</div>
+                </div>
+                <div className="text-right flex items-center gap-3">
+                  {cloudflaredVersion ? (
+                    <code className="bg-white/10 px-3 py-1 rounded text-sm text-green-400 font-mono">
+                      {cloudflaredVersion}
+                    </code>
+                  ) : (
+                    <>
+                      <span className="text-gray-500 text-sm">{t('settings.notInstalled')}</span>
+                      <button
+                        onClick={installCloudflared}
+                        disabled={isInstallingCloudflared}
+                        className="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isInstallingCloudflared ? t('common.loading') : t('common.install')}
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
             {/* Binary Path */}
             <div className="py-3 border-b border-white/5">
               <label className="block text-white font-medium mb-2">{t('settings.binaryPath')}</label>
