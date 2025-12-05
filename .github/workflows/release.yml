@@ -51,6 +51,39 @@ jobs:
       - name: Install frontend dependencies
         run: pnpm install
 
+      - name: Create binaries directory
+        shell: bash
+        run: mkdir -p src-tauri/binaries
+
+      - name: Download cloudflared (macOS aarch64)
+        if: matrix.args == '--target aarch64-apple-darwin'
+        shell: bash
+        run: |
+          curl -L -o cloudflared.tgz https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-darwin-arm64.tgz
+          tar -xzf cloudflared.tgz
+          mv cloudflared src-tauri/binaries/cloudflared-aarch64-apple-darwin
+
+      - name: Download cloudflared (macOS x86_64)
+        if: matrix.args == '--target x86_64-apple-darwin'
+        shell: bash
+        run: |
+          curl -L -o cloudflared.tgz https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-darwin-amd64.tgz
+          tar -xzf cloudflared.tgz
+          mv cloudflared src-tauri/binaries/cloudflared-x86_64-apple-darwin
+
+      - name: Download cloudflared (Linux)
+        if: matrix.platform == 'ubuntu-22.04'
+        shell: bash
+        run: |
+          curl -L -o src-tauri/binaries/cloudflared-x86_64-unknown-linux-gnu https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+          chmod +x src-tauri/binaries/cloudflared-x86_64-unknown-linux-gnu
+
+      - name: Download cloudflared (Windows)
+        if: matrix.platform == 'windows-latest'
+        shell: bash
+        run: |
+          curl -L -o src-tauri/binaries/cloudflared-x86_64-pc-windows-msvc.exe https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe
+
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
