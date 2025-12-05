@@ -1,8 +1,7 @@
 import { 
   Terminal, 
   Monitor, 
-  Network, 
-  Server as ServerIcon,
+  Network,
   Edit2,
   Trash2,
   Star,
@@ -13,7 +12,7 @@ import {
 import { useTranslation } from "react-i18next";
 import Button from "../Button/Button";
 import { useStore } from "../../store";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 interface ServiceDetailViewProps {
   service: any;

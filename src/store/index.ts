@@ -28,5 +28,6 @@ export const useService = (id: string) => {
 };
 
 // Export types
-export type { Tunnel, RecentConnection, AppSettings } from './tunnelSlice';
-export type { ServerState, TunnelState, UIState } from './serverSlice';
+export type { Tunnel, TunnelState } from './tunnelSlice';
+export type { ServerState } from './serverSlice';
+export type { UIState, RecentConnection, AppSettings } from './uiSlice';

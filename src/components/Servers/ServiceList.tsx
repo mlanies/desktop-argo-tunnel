@@ -1,6 +1,6 @@
 import { Terminal, Monitor, Network, Server as ServerIcon } from "lucide-react";
 import { useStore } from "../../store";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 interface ServiceListProps {
   services: any[];

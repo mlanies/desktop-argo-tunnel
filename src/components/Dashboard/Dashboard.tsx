@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { 
   Server, 
   Activity, 
-  Clock, 
+  
   Plus, 
   Terminal, 
   Monitor,

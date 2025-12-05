@@ -1,4 +1,3 @@
-import { safeGetCurrentWebviewWindow, safeInvoke } from "../../utils/tauriUtils";
 import classNames from "classnames";
 import Logo from "../Logo";
 import Button from "../Button/Button";
@@ -22,7 +21,7 @@ export default function Header({
   actions,
   variant = 'default',
 }: HeaderProps) {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const [showLangMenu, setShowLangMenu] = useState(false);
   
   // Detect macOS

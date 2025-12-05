@@ -113,7 +113,7 @@ export default function Sidebar() {
       });
       setServiceHost("");
       setServicePort("");
-      setSelectedServerId(null);
+      setSelectedServer(null);
       setShowAddServiceModal(false);
       showNotification({
         type: 'success',
@@ -131,7 +131,7 @@ export default function Sidebar() {
   };
 
   const openAddServiceModal = (serverId: string) => {
-    setSelectedServerId(serverId);
+    setSelectedServer(serverId);
     setShowAddServiceModal(true);
   };
 
@@ -298,7 +298,7 @@ export default function Sidebar() {
           setShowAddServiceModal(false);
           setServiceHost("");
           setServicePort("");
-          setSelectedServerId(null);
+          setSelectedServer(null);
         }}
         title="Добавить сервис"
       >

@@ -16,13 +16,11 @@ export default function ServerManagementAccordion() {
     connected_services,
     selectedServiceId,
     tunnels,
-    favorites,
-    deleteServer
+    favorites
   } = useStore();
 
   const [showAddServerModal, setShowAddServerModal] = useState(false);
   const [showAddServiceModal, setShowAddServiceModal] = useState(false);
-  const [serverToEdit, setServerToEdit] = useState<any>(null);
   const [expandedServers, setExpandedServers] = useState<Set<string>>(new Set());
   const [selectedServerForService, setSelectedServerForService] = useState<any>(null);
   const toast = useToast();
@@ -88,25 +86,8 @@ export default function ServerManagementAccordion() {
     }
   }, [selectedService, isServiceConnected, activeTunnel, toast, t]);
 
-  const handleDeleteServer = useCallback(async (id: string, name: string) => {
-    if (window.confirm(t('common.deleteConfirm', { name }))) {
-      try {
-        await deleteServer(id);
-        toast.success(t('success.deleted'));
-      } catch (error) {
-        toast.error(t('errors.generic'));
-      }
-    }
-  }, [deleteServer, toast, t]);
-
-  const handleEditServer = useCallback((server: any) => {
-    setServerToEdit(server);
-    setShowAddServerModal(true);
-  }, []);
-
   const handleCloseAddServerModal = useCallback(() => {
     setShowAddServerModal(false);
-    setServerToEdit(null);
   }, []);
 
   const handleAddServer = useCallback(() => {
@@ -304,7 +285,6 @@ export default function ServerManagementAccordion() {
             onSuccess={() => {
               // Data will be updated via servers_event
             }}
-            initialData={serverToEdit}
           />
         </Portal>
       )}

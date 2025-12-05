@@ -58,7 +58,7 @@ export const createServerSlice: StateCreator<
   setSelectedServer: (serverId) => {
     set((state) => ({
       selectedServerId: serverId,
-      selectedServiceId: serverId !== state.selectedServerId ? null : state.selectedServiceId,
+      selectedServiceId: serverId !== state.selectedServerId ? null : (state as any).selectedServiceId,
     }));
   },
 

@@ -80,7 +80,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
 
   // Filter items based on search
   const filteredServers = allServers.filter(item =>
-    item.name.toLowerCase().includes(search.toLowerCase())
+    (item.name || '').toLowerCase().includes(search.toLowerCase())
   );
 
   const allItems = search 

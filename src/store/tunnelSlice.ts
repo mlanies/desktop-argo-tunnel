@@ -8,6 +8,7 @@ export interface Tunnel {
   createdAt: string;
   hostname?: string;
   localPort?: number;
+  remotePort?: number;
   pid?: number;
   config?: Record<string, any>;
 }
@@ -25,6 +26,7 @@ export interface TunnelActions {
   setSelectedService: (serviceId: string | null) => void;
   startTcpTunnel: (hostname: string, localPort: number) => Promise<void>;
   stopTcpTunnel: (id: string) => Promise<void>;
+  stopAllTunnels: () => Promise<void>;
 }
 
 export type TunnelSlice = TunnelState & TunnelActions;
@@ -34,7 +36,7 @@ export const createTunnelSlice: StateCreator<
   [],
   [],
   TunnelSlice
-> = (set) => ({
+> = (set, get) => ({
   // State
   tunnels: [],
   connected_services: [],
@@ -91,5 +93,17 @@ export const createTunnelSlice: StateCreator<
       console.error('Failed to stop TCP tunnel:', error);
       throw error;
     }
+  },
+
+  stopAllTunnels: async () => {
+    const tunnels = get().tunnels;
+    for (const tunnel of tunnels) {
+      try {
+        await invoke('stop_tcp_tunnel', { id: tunnel.id });
+      } catch (error) {
+        console.error(`Failed to stop tunnel ${tunnel.id}:`, error);
+      }
+    }
+    set({ tunnels: [] });
   },
 });

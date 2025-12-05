@@ -52,12 +52,12 @@ export default function Favorites() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className={`p-3 rounded-lg ${
-                    service.protocol === 'SSH' ? 'bg-green-500/20 text-green-400' :
-                    service.protocol === 'RDP' ? 'bg-blue-500/20 text-blue-400' :
+                    service.protocol === 'ssh' ? 'bg-green-500/20 text-green-400' :
+                    service.protocol === 'rdp' ? 'bg-blue-500/20 text-blue-400' :
                     'bg-purple-500/20 text-purple-400'
                   }`}>
-                    {service.protocol === 'SSH' ? <Terminal size={20} /> : 
-                     service.protocol === 'RDP' ? <Monitor size={20} /> : 
+                    {service.protocol === 'ssh' ? <Terminal size={20} /> : 
+                     service.protocol === 'rdp' ? <Monitor size={20} /> : 
                      <Activity size={20} />}
                   </div>
                   <div>

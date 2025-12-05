@@ -1,15 +1,12 @@
 import { 
+  X, 
   Terminal, 
   Monitor, 
-  Network, 
-  Server as ServerIcon,
-  Edit2,
-  Trash2,
+  Network,
   Star,
   Clock,
   Play,
-  Square,
-  X
+  Square
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import Button from "../Button/Button";

@@ -1,8 +1,8 @@
 [package]
 name = "desktop-argo-tunnel"
-version = "0.1.0"
-description = "Desktop argo tunnel - локальное приложение для управления серверами через cloudflared туннели"
-authors = ["you"]
+version = "0.3.2"
+description = "Desktop argo tunnel"
+authors = ["Maksim Lanies"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
