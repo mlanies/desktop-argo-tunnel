@@ -62,12 +62,6 @@
 ### Dashboard
 ![Dashboard](docs/screenshots/dashboard.png)
 
-### Tunnel Management
-![Tunnels](docs/screenshots/tunnels.png)
-
-### Server Details
-![Server Details](docs/screenshots/server-details.png)
-
 ## Installation
 
 ### Prerequisites
