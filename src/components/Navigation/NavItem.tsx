@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import classNames from "classnames";
 import { Link } from "@tanstack/react-router";
+import { motion } from "framer-motion";
 
 interface NavItemProps {
   to?: string;
@@ -25,7 +26,7 @@ export default function NavItem({
     <>
       <div className={classNames(
         "flex items-center justify-center w-8 h-8 rounded-lg transition-colors",
-        active ? "text-white bg-white/10" : "text-gray-400 group-hover:text-white group-hover:bg-white/5"
+        active ? "text-emerald-400 bg-emerald-500/15" : "text-gray-400 group-hover:text-emerald-400 group-hover:bg-emerald-500/10"
       )}>
         {icon}
       </div>
@@ -36,7 +37,7 @@ export default function NavItem({
         {label}
       </span>
       {badge && (
-        <span className="px-2 py-0.5 text-[10px] font-bold text-white bg-blue-500 rounded-full">
+        <span className="px-2 py-0.5 text-[10px] font-bold text-white bg-emerald-500 rounded-full">
           {badge}
         </span>
       )}
@@ -45,7 +46,7 @@ export default function NavItem({
 
   const baseClasses = classNames(
     "flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group cursor-pointer select-none",
-    active ? "bg-white/5 shadow-sm" : "hover:bg-white/5",
+    active ? "bg-emerald-500/10 shadow-sm border border-emerald-500/20" : "hover:bg-white/5",
     className
   );
 
@@ -58,8 +59,14 @@ export default function NavItem({
   }
 
   return (
-    <div onClick={onClick} className={baseClasses}>
+    <motion.div 
+      onClick={onClick} 
+      className={baseClasses}
+      whileHover={{ x: 2 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ duration: 0.15 }}
+    >
       {content}
-    </div>
+    </motion.div>
   );
 }

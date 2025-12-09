@@ -1,39 +1,43 @@
 @import "tailwindcss";
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap');
 
 @theme {
-    /* Core Palette */
-    --color-twogc-black: #0a0a0a;
-    --color-twogc-dark: #0e0e10;
-    --color-twogc-darker: #050505;
-    --color-twogc-white: #ffffff;
+    /* Core Palette - Deep Emerald Theme */
+    --color-twogc-black: #050807;
+    --color-twogc-dark: #0a100e;
+    --color-twogc-darker: #030504;
+    --color-twogc-white: #f0f4f2;
     
     /* Glassmorphism System */
-    --glass-bg: rgba(255, 255, 255, 0.03);
-    --glass-bg-hover: rgba(255, 255, 255, 0.08);
-    --glass-bg-active: rgba(255, 255, 255, 0.12);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-border-hover: rgba(255, 255, 255, 0.15);
-    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    --backdrop-blur: blur(12px);
+    --glass-bg: rgba(16, 42, 34, 0.15);
+    --glass-bg-hover: rgba(16, 42, 34, 0.25);
+    --glass-bg-active: rgba(16, 42, 34, 0.35);
+    --glass-border: rgba(52, 211, 153, 0.12);
+    --glass-border-hover: rgba(52, 211, 153, 0.25);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+    --backdrop-blur: blur(16px);
     
-    /* Gradient Accents */
-    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-    --gradient-warning: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    --gradient-info: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    --gradient-dark: linear-gradient(180deg, rgba(20, 20, 20, 0.8) 0%, rgba(10, 10, 10, 0.95) 100%);
+    /* Gradient Accents - Emerald/Copper Theme */
+    --gradient-primary: linear-gradient(135deg, #059669 0%, #34d399 50%, #a3e635 100%);
+    --gradient-success: linear-gradient(135deg, #10b981 0%, #6ee7b7 100%);
+    --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+    --gradient-info: linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%);
+    --gradient-dark: linear-gradient(180deg, rgba(10, 16, 14, 0.9) 0%, rgba(5, 8, 7, 0.98) 100%);
+    --gradient-accent: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
     
     /* Semantic Colors */
-    --color-primary: #667eea;
-    --color-success: #10b981;
-    --color-warning: #f59e0b;
-    --color-error: #ef4444;
-    --color-text-main: #ffffff;
-    --color-text-muted: rgba(255, 255, 255, 0.6);
-    --color-text-dim: rgba(255, 255, 255, 0.4);
+    --color-primary: #10b981;
+    --color-primary-hover: #059669;
+    --color-accent: #d97706;
+    --color-success: #34d399;
+    --color-warning: #fbbf24;
+    --color-error: #f87171;
+    --color-text-main: #f0f4f2;
+    --color-text-muted: rgba(240, 244, 242, 0.65);
+    --color-text-dim: rgba(240, 244, 242, 0.4);
     
     /* Typography */
-    --font-work-sans: "Work Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-sans: "Satoshi", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-mono: "JetBrains Mono", "Fira Code", monospace;
     
     /* Spacing & Radius */
@@ -49,28 +53,15 @@
     --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
     
     /* Shadows */
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.2);
-    --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.3);
-    --shadow-glow-primary: 0 0 20px rgba(102, 126, 234, 0.3);
-    --shadow-glow-success: 0 0 20px rgba(17, 153, 142, 0.3);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.15);
+    --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.25);
+    --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.35);
+    --shadow-glow-primary: 0 0 20px rgba(16, 185, 129, 0.35);
+    --shadow-glow-accent: 0 0 20px rgba(217, 119, 6, 0.35);
+    --shadow-glow-success: 0 0 20px rgba(52, 211, 153, 0.35);
 }
 
 /* Шрифты */
-@font-face {
-    font-family: "Work Sans";
-    font-style: normal;
-    font-weight: 300;
-    src: url("/fonts/Work Sans/WorkSans.ttf");
-}
-
-@font-face {
-    font-family: "Work Sans";
-    font-style: italic;
-    font-weight: 300;
-    src: url("/fonts/Work Sans/WorkSans-Italic.ttf");
-}
-
 @font-face {
     font-family: "Yinmar";
     src: url("/fonts/yinmar/Yinmar-Regular.ttf");
@@ -82,10 +73,10 @@
 }
 
 body {
-    font-family: var(--font-work-sans);
+    font-family: var(--font-sans);
     font-size: 14px;
     line-height: 1.5;
-    color: var(--color-twogc-white);
+    color: var(--color-text-main);
     background: var(--color-twogc-black);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -113,7 +104,7 @@ body {
     padding: 12px 24px;
     border: none;
     border-radius: var(--radius-lg);
-    font-family: var(--font-work-sans);
+    font-family: var(--font-sans);
     font-size: 14px;
     font-weight: 500;
     text-decoration: none;
@@ -136,20 +127,20 @@ body {
 
 /* Варианты кнопок */
 .btn-primary {
-    background: var(--color-twogc-primary);
-    color: var(--color-twogc-white);
+    background: var(--color-primary);
+    color: var(--color-text-main);
     box-shadow: var(--shadow-md);
 }
 
 .btn-primary:hover {
-    background: var(--color-twogc-primary-hover);
+    background: var(--color-primary-hover);
     box-shadow: var(--shadow-lg);
     transform: translateY(-1px);
 }
 
 .btn-secondary {
     background: var(--color-twogc-gray-200);
-    color: var(--color-twogc-white);
+    color: var(--color-text-main);
     border: 1px solid var(--color-twogc-gray-300);
 }
 
@@ -166,13 +157,13 @@ body {
 
 .btn-ghost:hover {
     background: var(--color-twogc-gray-100);
-    color: var(--color-twogc-white);
+    color: var(--color-text-main);
     border-color: var(--color-twogc-gray-300);
 }
 
 .btn-success {
-    background: var(--color-twogc-success);
-    color: var(--color-twogc-white);
+    background: var(--color-success);
+    color: var(--color-text-main);
 }
 
 .btn-success:hover {
@@ -181,7 +172,7 @@ body {
 
 .btn-danger {
     background: var(--color-twogc-error);
-    color: var(--color-twogc-white);
+    color: var(--color-text-main);
 }
 
 .btn-danger:hover {
@@ -206,8 +197,8 @@ body {
     background: var(--color-twogc-dark);
     border: 1px solid var(--color-twogc-gray-200);
     border-radius: var(--radius-lg);
-    color: var(--color-twogc-white);
-    font-family: var(--font-work-sans);
+    color: var(--color-text-main);
+    font-family: var(--font-sans);
     font-size: 14px;
     transition: all var(--transition-normal);
 }
@@ -218,7 +209,7 @@ body {
 
 .input:focus {
     outline: none;
-    border-color: var(--color-twogc-primary);
+    border-color: var(--color-primary);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
@@ -249,7 +240,7 @@ body {
 .card-title {
     font-size: 18px;
     font-weight: 600;
-    color: var(--color-twogc-white);
+    color: var(--color-text-main);
     margin: 0;
 }
 
@@ -277,25 +268,25 @@ body {
 
 .badge-primary {
     background: rgba(59, 130, 246, 0.2);
-    color: var(--color-twogc-primary);
+    color: var(--color-primary);
     border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .badge-success {
     background: rgba(16, 185, 129, 0.2);
-    color: var(--color-twogc-success);
+    color: var(--color-success);
     border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .badge-warning {
     background: rgba(245, 158, 11, 0.2);
-    color: var(--color-twogc-warning);
+    color: var(--color-warning);
     border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .badge-error {
     background: rgba(239, 68, 68, 0.2);
-    color: var(--color-twogc-error);
+    color: var(--color-error);
     border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
@@ -339,7 +330,7 @@ body {
 }
 
 input:checked + .slider {
-    background: var(--color-twogc-primary);
+    background: var(--color-primary);
 }
 
 input:checked + .slider:before {
@@ -384,7 +375,7 @@ input:checked + .slider:before {
 .modal-title {
     font-size: 20px;
     font-weight: 600;
-    color: var(--color-twogc-white);
+    color: var(--color-text-main);
     margin: 0;
 }
 
@@ -400,7 +391,7 @@ input:checked + .slider:before {
 
 .modal-close:hover {
     background: var(--color-twogc-gray-100);
-    color: var(--color-twogc-white);
+    color: var(--color-text-main);
 }
 
 /* Glassmorphism Utilities */
@@ -516,13 +507,13 @@ input:checked + .slider:before {
 .logo-light {
     font-size: 18px;
     font-weight: 300;
-    color: var(--color-twogc-white);
+    color: var(--color-text-main);
 }
 
 .logo-bold {
     font-size: 18px;
     font-weight: 700;
-    color: var(--color-twogc-white);
+    color: var(--color-text-main);
     letter-spacing: 1px;
 }
 
@@ -551,15 +542,15 @@ input:checked + .slider:before {
 }
 
 .nav-tab.active {
-    color: var(--color-twogc-primary);
-    border-bottom: 2.5px solid var(--color-twogc-primary);
+    color: var(--color-primary);
+    border-bottom: 2.5px solid var(--color-primary);
     background: none;
     box-shadow: none;
     border-radius: 0;
 }
 
 .nav-tab:hover {
-    color: var(--color-twogc-primary);
+    color: var(--color-primary);
     background: var(--color-twogc-gray-100);
 }
 
@@ -593,7 +584,7 @@ input:checked + .slider:before {
 }
 
 .status-online {
-    background: var(--color-twogc-success);
+    background: var(--color-success);
     box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
@@ -602,7 +593,7 @@ input:checked + .slider:before {
 }
 
 .status-connecting {
-    background: var(--color-twogc-warning);
+    background: var(--color-warning);
     animation: pulse 2s infinite;
 }
 
@@ -613,7 +604,7 @@ input:checked + .slider:before {
     right: 20px;
     padding: 16px 20px;
     border-radius: var(--radius-lg);
-    color: var(--color-twogc-white);
+    color: var(--color-text-main);
     font-weight: 500;
     z-index: 1001;
     animation: slideInRight var(--transition-normal);
@@ -621,19 +612,19 @@ input:checked + .slider:before {
 }
 
 .notification-success {
-    background: var(--color-twogc-success);
+    background: var(--color-success);
 }
 
 .notification-error {
-    background: var(--color-twogc-error);
+    background: var(--color-error);
 }
 
 .notification-warning {
-    background: var(--color-twogc-warning);
+    background: var(--color-warning);
 }
 
 .notification-info {
-    background: var(--color-twogc-primary);
+    background: var(--color-primary);
 }
 
 @keyframes slideInRight {

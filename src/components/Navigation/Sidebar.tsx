@@ -7,8 +7,27 @@ import {
   Star, 
   Settings
 } from "lucide-react";
+import { motion } from "framer-motion";
 import NavItem from "./NavItem";
 import { useStore } from "../../store";
+
+const sidebarVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.4,
+      staggerChildren: 0.05,
+      delayChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, x: -10 },
+  visible: { opacity: 1, x: 0 }
+};
 
 export default function Sidebar() {
   const { t } = useTranslation();
@@ -21,9 +40,14 @@ export default function Sidebar() {
   const activeTunnelsCount = tunnels.filter(t => t.status === 'active').length;
 
   return (
-    <aside className="flex flex-col h-full bg-[#0e0e10] rounded-3xl border border-white/5 overflow-hidden">
+    <motion.aside 
+      className="flex flex-col h-full bg-[#0a100e] rounded-3xl border border-emerald-500/10 overflow-hidden"
+      variants={sidebarVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {/* Main Navigation */}
-      <div className="p-4 space-y-1">
+      <motion.div className="p-4 space-y-1" variants={itemVariants}>
         <NavItem 
           icon={<LayoutDashboard size={18} />} 
           label={t('nav.dashboard')} 
@@ -43,12 +67,12 @@ export default function Sidebar() {
           active={activeTab === 'servers'}
           onClick={() => setActiveTab('servers')}
         />
-      </div>
+      </motion.div>
 
-      <div className="h-px bg-white/5 mx-4 my-2" />
+      <div className="h-px bg-emerald-500/10 mx-4 my-2" />
 
       {/* Quick Access */}
-      <div className="p-4 space-y-1">
+      <motion.div className="p-4 space-y-1" variants={itemVariants}>
         <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">
           {t('common.info')}
         </div>
@@ -64,19 +88,19 @@ export default function Sidebar() {
           active={activeTab === 'favorites'}
           onClick={() => setActiveTab('favorites')}
         />
-      </div>
+      </motion.div>
 
-      <div className="h-px bg-white/5 mx-4 my-2" />
+      <div className="h-px bg-emerald-500/10 mx-4 my-2" />
 
       {/* Settings at bottom */}
-      <div className="p-4 mt-auto border-t border-white/5">
+      <motion.div className="p-4 mt-auto border-t border-emerald-500/10" variants={itemVariants}>
         <NavItem 
           icon={<Settings size={18} />} 
           label={t('nav.settings')} 
           active={activeTab === 'settings'}
           onClick={() => setActiveTab('settings')}
         />
-      </div>
-    </aside>
+      </motion.div>
+    </motion.aside>
   );
 }

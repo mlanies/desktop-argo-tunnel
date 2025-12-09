@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { motion } from "framer-motion";
 import "./Toggle.css";
 
 interface ToggleProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'onChange'> {
@@ -35,16 +36,24 @@ export default function Toggle({
   };
 
   const variantClasses = {
-    default: checked ? 'bg-blue-500' : 'bg-gray-300',
-    success: checked ? 'bg-green-500' : 'bg-gray-300',
-    warning: checked ? 'bg-yellow-500' : 'bg-gray-300',
-    error: checked ? 'bg-red-500' : 'bg-gray-300',
+    default: checked ? 'bg-emerald-500' : 'bg-gray-600',
+    success: checked ? 'bg-emerald-400' : 'bg-gray-600',
+    warning: checked ? 'bg-amber-500' : 'bg-gray-600',
+    error: checked ? 'bg-red-500' : 'bg-gray-600',
+  };
+
+  const glowClasses = {
+    default: checked ? 'shadow-[0_0_8px_rgba(16,185,129,0.4)]' : '',
+    success: checked ? 'shadow-[0_0_8px_rgba(52,211,153,0.4)]' : '',
+    warning: checked ? 'shadow-[0_0_8px_rgba(251,191,36,0.4)]' : '',
+    error: checked ? 'shadow-[0_0_8px_rgba(239,68,68,0.4)]' : '',
   };
 
   const toggleClasses = classNames(
     'switch relative inline-flex items-center rounded-full transition-all duration-200',
     sizeClasses[size],
     variantClasses[variant],
+    glowClasses[variant],
     {
       'opacity-50 cursor-not-allowed': disabled,
       'cursor-pointer': !disabled,
@@ -52,24 +61,16 @@ export default function Toggle({
     propsClassName,
   );
 
-  const getSliderClasses = () => {
-    const baseClasses = 'slider absolute rounded-full transition-all duration-200 bg-white shadow-sm';
-    const sizeClasses = {
-      sm: 'w-3 h-3',
-      md: 'w-5 h-5',
-      lg: 'w-6 h-6',
-    };
-    const positionClasses = {
-      sm: checked ? 'translate-x-4' : 'translate-x-0.5',
-      md: checked ? 'translate-x-5' : 'translate-x-0.5',
-      lg: checked ? 'translate-x-7' : 'translate-x-0.5',
-    };
-    
-    return classNames(
-      baseClasses,
-      sizeClasses[size],
-      positionClasses[size]
-    );
+  const sliderSizes = {
+    sm: { width: 12, height: 12 },
+    md: { width: 20, height: 20 },
+    lg: { width: 24, height: 24 },
+  };
+
+  const sliderPositions = {
+    sm: { on: 18, off: 2 },
+    md: { on: 22, off: 2 },
+    lg: { on: 28, off: 2 },
   };
 
   return (
@@ -83,7 +84,19 @@ export default function Toggle({
           disabled={disabled}
           onChange={handleChange}
         />
-        <span className={getSliderClasses()} />
+        <motion.span 
+          className="absolute rounded-full bg-white shadow-md"
+          style={{
+            width: sliderSizes[size].width,
+            height: sliderSizes[size].height,
+            top: '50%',
+            y: '-50%'
+          }}
+          animate={{
+            x: checked ? sliderPositions[size].on : sliderPositions[size].off
+          }}
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+        />
       </label>
       
       {(label || description) && (

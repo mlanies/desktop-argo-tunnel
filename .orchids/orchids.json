@@ -1,0 +1,7 @@
+{
+  "projectId": "63f36365-9d3e-4e58-9ff5-40a915d9eff1",
+  "createdAt": 1765309291438,
+  "startupCommands": [
+    "bun run tauri dev"
+  ]
+}

@@ -7,7 +7,7 @@
   border: none;
   background: none;
   overflow: hidden;
-  isolation: isolate; /* Creates a new stacking context */
+  isolation: isolate;
 }
 
 .twogc-button:active {
@@ -64,7 +64,7 @@
   padding: 12px 24px;
   border: none;
   border-radius: var(--radius-lg);
-  font-family: var(--font-work-sans);
+  font-family: var(--font-sans);
   font-size: 14px;
   font-weight: 500;
   text-decoration: none;
@@ -107,60 +107,61 @@
 
 /* Варианты кнопок */
 .btn-primary {
-  background: var(--color-twogc-primary);
-  color: var(--color-twogc-white);
+  background: var(--color-primary);
+  color: var(--color-text-main);
   box-shadow: var(--shadow-md);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--color-twogc-primary-hover);
-  box-shadow: var(--shadow-lg);
+  background: var(--color-primary-hover);
+  box-shadow: var(--shadow-glow-primary);
   transform: translateY(-1px);
 }
 
 .btn-secondary {
-  background: var(--color-twogc-gray-200);
-  color: var(--color-twogc-white);
-  border: 1px solid var(--color-twogc-gray-300);
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-text-main);
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: var(--color-twogc-gray-300);
-  border-color: var(--color-twogc-gray-400);
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
 }
 
 .btn-ghost {
   background: transparent;
-  color: var(--color-twogc-gray-500);
-  border: 1px solid var(--color-twogc-gray-200);
+  color: var(--color-text-muted);
+  border: 1px solid rgba(240, 244, 242, 0.1);
 }
 
 .btn-ghost:hover:not(:disabled) {
-  background: var(--color-twogc-gray-100);
-  color: var(--color-twogc-white);
-  border-color: var(--color-twogc-gray-300);
+  background: rgba(240, 244, 242, 0.05);
+  color: var(--color-text-main);
+  border-color: rgba(240, 244, 242, 0.2);
 }
 
 .btn-success {
-  background: var(--color-twogc-success);
-  color: var(--color-twogc-white);
+  background: var(--color-success);
+  color: var(--color-twogc-black);
   box-shadow: var(--shadow-md);
+  font-weight: 600;
 }
 
 .btn-success:hover:not(:disabled) {
-  background: #059669;
-  box-shadow: var(--shadow-lg);
+  background: #6ee7b7;
+  box-shadow: var(--shadow-glow-success);
   transform: translateY(-1px);
 }
 
 .btn-danger {
-  background: var(--color-twogc-error);
-  color: var(--color-twogc-white);
+  background: var(--color-error);
+  color: var(--color-text-main);
   box-shadow: var(--shadow-md);
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: #dc2626;
+  background: #ef4444;
   box-shadow: var(--shadow-lg);
   transform: translateY(-1px);
 }
@@ -168,9 +169,9 @@
 /* CTA кнопки */
 .btn-cta {
   background: var(--gradient-primary);
-  color: var(--color-twogc-white);
+  color: var(--color-text-main);
   font-weight: 600;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-glow-primary);
   position: relative;
   overflow: hidden;
 }
@@ -182,7 +183,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
   transition: left 0.5s;
 }
 
@@ -192,7 +193,7 @@
 
 .btn-cta:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-xl);
+  box-shadow: var(--shadow-lg), var(--shadow-glow-primary);
 }
 
 /* Состояние загрузки */
@@ -216,7 +217,7 @@
 /* Фокус для доступности */
 .btn:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
 }
 
 .btn:focus:not(:focus-visible) {
@@ -243,4 +244,3 @@
     min-height: 48px;
   }
 }
-

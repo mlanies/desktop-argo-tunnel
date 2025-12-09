@@ -5,6 +5,7 @@ import Icon from "../Icon/Icon";
 import { useMemo, useState } from "react";
 import { FiMinus, FiX, FiGlobe } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface HeaderProps {
   className?: string;
@@ -24,7 +25,6 @@ export default function Header({
   const { i18n } = useTranslation();
   const [showLangMenu, setShowLangMenu] = useState(false);
   
-  // Detect macOS
   const isMac = useMemo(() => {
     if (typeof navigator === 'undefined') return false;
     return /Mac|iPhone|iPad|iPod/.test(navigator.platform) || 
@@ -66,68 +66,76 @@ export default function Header({
     transparent: 'bg-transparent',
   };
 
-  // Window controls
   const windowControls = isMac ? (
-    // For macOS: Close first, then Minimize (standard macOS order)
     <div className="flex items-center gap-2 relative z-20" data-tauri-drag-region="none">
-      <button
+      <motion.button
         onClick={(e) => {
           e.stopPropagation();
           handleClose();
         }}
-        className="p-1.5 rounded hover:bg-red-600 transition-colors"
+        className="p-1.5 rounded hover:bg-red-500/80 transition-colors"
         title="Close"
         data-tauri-drag-region="none"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
       >
         <FiX size={12} className="text-white" />
-      </button>
-      <button
+      </motion.button>
+      <motion.button
         onClick={(e) => {
           e.stopPropagation();
           handleMinimize();
         }}
-        className="p-1.5 rounded hover:bg-gray-700 transition-colors"
+        className="p-1.5 rounded hover:bg-emerald-500/20 transition-colors"
         title="Minimize"
         data-tauri-drag-region="none"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
       >
         <FiMinus size={12} className="text-gray-300" />
-      </button>
+      </motion.button>
     </div>
   ) : (
-    // For Windows/Linux: Close first, then Minimize
     <div className="flex items-center gap-2 relative z-20" data-tauri-drag-region="none">
-      <button
+      <motion.button
         onClick={(e) => {
           e.stopPropagation();
           handleClose();
         }}
-        className="p-1.5 rounded hover:bg-red-600 transition-colors"
+        className="p-1.5 rounded hover:bg-red-500/80 transition-colors"
         title="Close"
         data-tauri-drag-region="none"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
       >
         <FiX size={12} className="text-white" />
-      </button>
-      <button
+      </motion.button>
+      <motion.button
         onClick={(e) => {
           e.stopPropagation();
           handleMinimize();
         }}
-        className="p-1.5 rounded hover:bg-gray-700 transition-colors"
+        className="p-1.5 rounded hover:bg-emerald-500/20 transition-colors"
         title="Minimize"
         data-tauri-drag-region="none"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
       >
         <FiMinus size={12} className="text-gray-300" />
-      </button>
+      </motion.button>
     </div>
   );
 
   return (
-    <header
+    <motion.header
       className={classNames(
         "flex items-center justify-between px-6 py-4 transition-all duration-200 z-50 relative",
         variant === 'default' ? '' : variantClasses[variant],
         className
       )}
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
     >
       {/* Draggable overlay */}
       <div 
@@ -137,7 +145,6 @@ export default function Header({
 
       {/* Левая часть */}
       <div className="flex items-center gap-4 relative z-10" data-tauri-drag-region="none">
-        {/* Кнопки управления окном для macOS */}
         {isMac && windowControls}
         
         {back && (
@@ -170,40 +177,49 @@ export default function Header({
         
         {/* Language Selector */}
         <div className="relative">
-          <button
+          <motion.button
             onClick={() => setShowLangMenu(!showLangMenu)}
-            className="p-1.5 rounded hover:bg-gray-700 transition-colors"
+            className="p-1.5 rounded hover:bg-emerald-500/20 transition-colors"
             title="Language / Язык"
             data-tauri-drag-region="none"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
           >
             <FiGlobe size={14} className="text-gray-300" />
-          </button>
+          </motion.button>
           
-          {showLangMenu && (
-            <div className="absolute right-0 top-full mt-2 bg-[#1a1a1a] border border-[#2e2e2e] rounded-lg shadow-xl overflow-hidden min-w-[120px] z-50">
-              <button
-                onClick={() => changeLanguage('en')}
-                className={`w-full px-4 py-2 text-left text-sm hover:bg-[#2e2e2e] transition-colors ${
-                  i18n.language === 'en' ? 'text-blue-400 bg-[#2e2e2e]' : 'text-gray-300'
-                }`}
+          <AnimatePresence>
+            {showLangMenu && (
+              <motion.div 
+                className="absolute right-0 top-full mt-2 bg-[#0a100e] border border-emerald-500/20 rounded-lg shadow-xl overflow-hidden min-w-[120px] z-50"
+                initial={{ opacity: 0, y: -5, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -5, scale: 0.95 }}
+                transition={{ duration: 0.15 }}
               >
-                English
-              </button>
-              <button
-                onClick={() => changeLanguage('ru')}
-                className={`w-full px-4 py-2 text-left text-sm hover:bg-[#2e2e2e] transition-colors ${
-                  i18n.language === 'ru' ? 'text-blue-400 bg-[#2e2e2e]' : 'text-gray-300'
-                }`}
-              >
-                Русский
-              </button>
-            </div>
-          )}
+                <button
+                  onClick={() => changeLanguage('en')}
+                  className={`w-full px-4 py-2 text-left text-sm hover:bg-emerald-500/10 transition-colors ${
+                    i18n.language === 'en' ? 'text-emerald-400 bg-emerald-500/10' : 'text-gray-300'
+                  }`}
+                >
+                  English
+                </button>
+                <button
+                  onClick={() => changeLanguage('ru')}
+                  className={`w-full px-4 py-2 text-left text-sm hover:bg-emerald-500/10 transition-colors ${
+                    i18n.language === 'ru' ? 'text-emerald-400 bg-emerald-500/10' : 'text-gray-300'
+                  }`}
+                >
+                  Русский
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
         
-        {/* Window controls for Windows/Linux */}
         {!isMac && windowControls}
       </div>
-    </header>
+    </motion.header>
   );
 }

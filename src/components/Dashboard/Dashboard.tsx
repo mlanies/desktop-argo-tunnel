@@ -6,8 +6,10 @@ import {
   Plus, 
   Terminal, 
   Monitor,
-  ArrowRight
+  ArrowRight,
+  CloudOff
 } from "lucide-react";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import StatsCard from "./StatsCard";
 import Button from "../Button/Button";
 import { useStore } from "../../store";
@@ -16,6 +18,26 @@ import { enUS, ru } from "date-fns/locale";
 import { useState, useMemo, useCallback } from "react";
 import AddServerWizard from "../Servers/AddServerWizard";
 import Portal from "../Portal";
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1
+    }
+  }
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.4, ease: "easeOut" }
+  }
+};
 
 export default function Dashboard() {
   const { t, i18n } = useTranslation();
@@ -70,9 +92,14 @@ export default function Dashboard() {
   }, [setActiveTab]);
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto custom-scrollbar p-6 space-y-8">
+    <motion.div 
+      className="flex flex-col h-full overflow-y-auto custom-scrollbar p-6 space-y-8"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <motion.div variants={itemVariants} className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white mb-1">{t('dashboard.title')}</h1>
           <p className="text-gray-400 text-sm">{t('dashboard.welcome')}</p>
@@ -96,7 +123,7 @@ export default function Dashboard() {
             {t('dashboard.addServer')}
           </Button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -106,6 +133,7 @@ export default function Dashboard() {
           icon={<Server size={24} />}
           gradient="primary"
           onClick={() => setActiveTab('servers')}
+          index={0}
         />
         <StatsCard
           title={t('dashboard.stats.activeConnections')}
@@ -113,23 +141,25 @@ export default function Dashboard() {
           icon={<Activity size={24} />}
           gradient="success"
           onClick={() => setActiveTab('active-connections')}
+          index={1}
         />
         <StatsCard
           title={t('dashboard.activeTunnels')}
           value={activeTunnels}
-          icon={<Activity size={24} className="text-purple-400" />}
+          icon={<Activity size={24} className="text-amber-400" />}
           gradient="warning"
           onClick={() => setActiveTab('active-connections')}
+          index={2}
         />
       </div>
 
       {/* Recent Connections */}
-      <div className="glass-panel rounded-2xl p-6">
+      <motion.div variants={itemVariants} className="glass-panel rounded-2xl p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-semibold text-white">{t('dashboard.recentConnections')}</h2>
           <button 
             onClick={handleViewAll}
-            className="flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors"
+            className="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 transition-colors"
             aria-label={t('common.viewAll')}
           >
             <span>{t('common.viewAll')}</span>
@@ -137,46 +167,65 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {recentConnections.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            {t('dashboard.noActivity')}
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {recentConnections.map((conn) => (
-              <div 
-                key={conn.id}
-                className="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer group"
-              >
-                <div className="flex items-center gap-4">
-                  <div className={`p-2 rounded-lg ${
-                    conn.protocol === 'ssh' ? 'bg-green-500/20 text-green-400' :
-                    conn.protocol === 'rdp' ? 'bg-blue-500/20 text-blue-400' :
-                    'bg-purple-500/20 text-purple-400'
-                  }`}>
-                    {conn.protocol === 'ssh' ? <Terminal size={18} /> : 
-                     conn.protocol === 'rdp' ? <Monitor size={18} /> : 
-                     <Activity size={18} />}
-                  </div>
-                  <div>
-                    <div className="font-medium text-white group-hover:text-blue-400 transition-colors">
-                      {conn.name}
+        <AnimatePresence mode="wait">
+          {recentConnections.length === 0 ? (
+            <motion.div 
+              key="empty"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="flex flex-col items-center justify-center py-12 text-gray-500"
+            >
+              <CloudOff size={48} className="mb-4 text-gray-600" />
+              <p className="text-lg font-medium mb-2">{t('dashboard.noActivity')}</p>
+              <p className="text-sm text-gray-600">{t('dashboard.connectToStart', 'Connect to a server to see activity here')}</p>
+            </motion.div>
+          ) : (
+            <motion.div 
+              key="list"
+              className="space-y-3"
+              initial="hidden"
+              animate="visible"
+              variants={containerVariants}
+            >
+              {recentConnections.map((conn, idx) => (
+                <motion.div 
+                  key={conn.id}
+                  variants={itemVariants}
+                  custom={idx}
+                  className="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer group"
+                  whileHover={{ x: 4, transition: { duration: 0.2 } }}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className={`p-2 rounded-lg ${
+                      conn.protocol === 'ssh' ? 'bg-emerald-500/20 text-emerald-400' :
+                      conn.protocol === 'rdp' ? 'bg-cyan-500/20 text-cyan-400' :
+                      'bg-amber-500/20 text-amber-400'
+                    }`}>
+                      {conn.protocol === 'ssh' ? <Terminal size={18} /> : 
+                       conn.protocol === 'rdp' ? <Monitor size={18} /> : 
+                       <Activity size={18} />}
                     </div>
-                    <div className="text-xs text-gray-500 uppercase">{conn.protocol}</div>
+                    <div>
+                      <div className="font-medium text-white group-hover:text-emerald-400 transition-colors">
+                        {conn.name}
+                      </div>
+                      <div className="text-xs text-gray-500 uppercase">{conn.protocol}</div>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-4">
-                  <span className="text-sm text-gray-500">
-                    {formatDistanceToNow(new Date(conn.timestamp), { addSuffix: true, locale })}
-                  </span>
-                  <div className="w-2 h-2 rounded-full bg-gray-600" />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-gray-500">
+                      {formatDistanceToNow(new Date(conn.timestamp), { addSuffix: true, locale })}
+                    </span>
+                    <div className="w-2 h-2 rounded-full bg-gray-600" />
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
       
       {/* Modals */}
       {showAddServerModal && (
@@ -187,6 +236,6 @@ export default function Dashboard() {
           />
         </Portal>
       )}
-    </div>
+    </motion.div>
   );
 }
