@@ -3,6 +3,7 @@
 > A modern, professional GUI for managing Cloudflare Tunnels and remote server connections
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-0.3.11-green.svg)](https://github.com/mlanies/desktop-argo-tunnel/releases/tag/v0.3.11)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey)]()
 [![Built with Tauri](https://img.shields.io/badge/built%20with-Tauri-24C8DB)]()
 
@@ -15,10 +16,11 @@
 ### Why Use This Application?
 
 - **No Command Line Required**: All `cloudflared access` functionality through a beautiful GUI
+- **Automatic Cloudflared Installation**: App can automatically download and install cloudflared if not present
 - **Automatic Port Management**: Random local port assignment for each connection
 - **One-Click Connections**: Connect to SSH, RDP, and TCP services instantly
 - **Centralized Management**: Manage all your servers and active tunnels from a single dashboard
-- **Secure & Local**: All credentials stored locally with encryption
+- **Secure Credential Storage**: Built-in KeePass integration for password management
 - **Multi-Language**: Full support for English and Russian
 
 ## Features
@@ -37,6 +39,13 @@
   - Secure credential storage
   - One-click connection via `cloudflared access tcp`
   - Automatic tunnel creation on connect
+
+- **KeePass Password Management**
+  - Built-in KeePass (.kdbx) database support
+  - Create, open, and manage password containers
+  - Secure credential storage with AES-256 encryption
+  - Import/export KeePass databases
+  - Password quality analysis and security scoring
 
 - **Dashboard & Analytics**
   - Real-time connection statistics
@@ -66,7 +75,9 @@
 
 ### Prerequisites
 
-- **Cloudflared**: The application requires `cloudflared` binary to be installed
+- **Cloudflared** (Optional): The application can automatically download and install `cloudflared` if not present
+  
+  If you prefer manual installation:
   ```bash
   # macOS
   brew install cloudflared
@@ -81,7 +92,7 @@
 
 ### Download & Install
 
-1. Download the latest release for your platform from [Releases](../../releases)
+1. Download the latest release for your platform from [Releases](https://github.com/mlanies/desktop-argo-tunnel/releases)
 2. Install the application:
    - **macOS**: Open the `.dmg` file and drag to Applications
    - **Windows**: Run the `.exe` installer
@@ -128,11 +139,14 @@
 - Native OS integration
 - Secure IPC communication
 - Process management for `cloudflared`
+- KeePass (.kdbx) database integration
 
 **Core Integration**
 - `cloudflared` binary for tunnel operations
+- Automatic cloudflared download and installation
 - Native SSH/RDP client integration
 - Secure credential storage using OS keychain
+- KeePass password database support
 
 ### Project Structure
 
