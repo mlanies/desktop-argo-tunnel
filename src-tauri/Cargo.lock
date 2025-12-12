@@ -1086,7 +1086,7 @@ dependencies = [
 
 [[package]]
 name = "desktop-argo-tunnel"
-version = "0.3.2"
+version = "0.3.8"
 dependencies = [
  "aes 0.8.4",
  "aes-gcm",
@@ -5531,7 +5531,7 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-log"
 version = "2.7.1"
-source = "git+https://github.com/tauri-apps/plugins-workspace.git?branch=v2#baefd761e0e38d4bafd29b5de0c76831f1086f17"
+source = "git+https://github.com/tauri-apps/plugins-workspace.git?branch=v2#e221a04ef4930fa7287d0f9b656f63474ea59489"
 dependencies = [
  "android_logger",
  "byte-unit",
@@ -6180,7 +6180,9 @@ version = "10.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e640d9b0964e9d39df633548591090ab92f7a4567bc31d3891af23471a3365c6"
 dependencies = [
+ "chrono",
  "lazy_static",
+ "serde_json",
  "thiserror 2.0.17",
  "ts-rs-macros",
  "uuid",

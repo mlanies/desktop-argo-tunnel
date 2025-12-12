@@ -148,7 +148,7 @@ impl KdbxManager {
         let mut keyfile_cursor = keyfile.as_ref().map(|data| std::io::Cursor::new(data.clone()));
         let keyfile_reader: Option<&mut dyn std::io::Read> = keyfile_cursor.as_mut().map(|c| c as &mut dyn std::io::Read);
         
-        let db = Database::open(&mut &buffer[..], Some(password), keyfile_reader)
+        let db = Database::open(&mut std::io::Cursor::new(&buffer[..]), Some(password), keyfile_reader)
             .with_context(|| format!("Failed to decrypt database with provided password"))?;
 
         let file_name = path.split('/').last().unwrap_or("Unknown").replace(".kdbx", "");

@@ -1,10 +1,10 @@
-# Desktop Argo Tunnel Manager - Архитектура
+# Desktop Argo Tunnel Manager - Architecture
 
-## Обзор
+## Overview
 
-Desktop Argo Tunnel Manager - это десктопное приложение на базе Tauri, которое предоставляет графический интерфейс для управления TCP-туннелями `cloudflared access`. Приложение фокусируется на клиентском управлении туннелями, позволяя пользователям подключаться к удаленным сервисам через защищенную сеть Cloudflare.
+Desktop Argo Tunnel Manager is a Tauri-based desktop application that provides a graphical interface for managing `cloudflared access` TCP tunnels. The application focuses on client-side tunnel management, allowing users to connect to remote services via the secure Cloudflare network.
 
-## Диаграмма архитектуры
+## Architecture Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -12,19 +12,18 @@ Desktop Argo Tunnel Manager - это десктопное приложение �
 ├─────────────────────────────────────────────────────────────┤
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
 │  │  Dashboard   │  │   Servers    │  │   Active     │       │
-│  │  Панель      │  │  Управление  │  │ Connections  │       │
-│  │  управления  │  │  серверами   │  │ Активные     │       │
-│  │              │  │              │  │ подключения  │       │
+│  │              │  │  Management  │  │ Connections  │       │
+│  │              │  │              │  │              │       │
 │  └──────────────┘  └──────────────┘  └──────────────┘       │
 │                                                             │
 │  ┌──────────────────────────────────────────────────┐       │
-│  │           Zustand Store (Состояние)              │       │
+│  │           Zustand Store (State)                  │       │
 │  │  - tunnels: ActiveTunnel[]                       │       │
 │  │  - servers: Server[]                             │       │
 │  │  - recentConnections: RecentConnection[]         │       │
 │  └──────────────────────────────────────────────────┘       │
 └─────────────────────────────────────────────────────────────┘
-                            ↕ IPC (Tauri Commands)
+                             | IPC (Tauri Commands)
 ┌─────────────────────────────────────────────────────────────┐
 │                    Backend (Rust/Tauri)                     │
 ├─────────────────────────────────────────────────────────────┤
@@ -36,252 +35,252 @@ Desktop Argo Tunnel Manager - это десктопное приложение �
 │  └──────────────────────────────────────────────────┘       │
 │                                                             │
 │  ┌──────────────────────────────────────────────────┐       │
-│  │    TunnelState (Менеджер процессов)              │       │
+│  │    TunnelState (Process Manager)                 │       │
 │  │  - processes: HashMap<String, u32>               │       │
 │  │    (tunnel_id -> PID)                            │       │
 │  └──────────────────────────────────────────────────┘       │
 └─────────────────────────────────────────────────────────────┘
-                            ↕ Запуск процесса
+                             | Process Launch
 ┌─────────────────────────────────────────────────────────────┐
 │                 Cloudflared Binary                          │
 │  cloudflared access tcp --hostname <host> --url <local>     │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## Основные компоненты
+## Core Components
 
 ### Frontend (React + TypeScript)
 
-#### 1. **Dashboard (Панель управления)**
-- **Назначение**: Обзор состояния системы и недавней активности
-- **Функции**:
-  - Количество активных туннелей
-  - История недавних подключений
-  - Быстрый доступ к избранному
-  - Визуализация статистики
+#### 1. **Dashboard**
+- **Purpose**: System status overview and recent activity.
+- **Features**:
+  - Count of active tunnels
+  - Recent connection history
+  - Quick access to favorites
+  - Statistics visualization
 
-#### 2. **Server Management (Управление серверами)**
-- **Назначение**: Управление удаленными серверами и сервисами
-- **Функции**:
-  - Иерархический вид (Компания → Сервер → Сервис)
-  - Протоколы сервисов: SSH, RDP, TCP
-  - Подключение в один клик
-  - Управление избранным
-  - Отслеживание статуса подключения
+#### 2. **Server Management**
+- **Purpose**: Management of remote servers and services.
+- **Features**:
+  - Hierarchical view (Company -> Server -> Service)
+  - Service protocols: SSH, RDP, TCP
+  - One-click connection
+  - Favorites management
+  - Connection status tracking
 
-**Процесс подключения**:
+**Connection Process**:
 ```
-Пользователь нажимает "Connect" 
-  → Генерация случайного порта (10000-60000)
-  → Вызов startTcpTunnel(hostname, port)
-  → Backend запускает процесс cloudflared
-  → Сохранение туннеля в состоянии
-  → Отображение локального порта пользователю
+User clicks "Connect" 
+  -> Random port generation (10000-60000)
+  -> startTcpTunnel(hostname, port) call
+  -> Backend starts cloudflared process
+  -> Tunnel saved in state
+  -> Local port displayed to user
 ```
 
-#### 3. **Active Connections (Активные подключения)**
-- **Назначение**: Мониторинг и управление запущенными TCP-туннелями
-- **Функции**:
-  - Список всех активных туннелей
-  - Отображение: hostname, локальный порт, PID, время работы
-  - Остановка туннеля
-  - Копирование локального порта в буфер обмена
+#### 3. **Active Connections**
+- **Purpose**: Monitoring and management of running TCP tunnels.
+- **Features**:
+  - List of all active tunnels
+  - Display: hostname, local port, PID, uptime
+  - Stop tunnel
+  - Copy local port to clipboard
 
-#### 4. **Settings (Настройки)**
-- **Назначение**: Конфигурация приложения
-- **Функции**:
-  - Выбор языка (EN/RU)
-  - Выбор темы (Темная/Светлая/Системная)
-  - Путь к бинарнику cloudflared
-  - Настройки автоподключения
+#### 4. **Settings**
+- **Purpose**: Application configuration.
+- **Features**:
+  - Language selection (EN/RU)
+  - Theme selection (Dark/Light/System)
+  - Cloudflared binary path
+  - Auto-connection settings
 
 ### Backend (Rust + Tauri)
 
-#### 1. **Модуль команд Cloudflared**
-Расположение: `src-tauri/src/cloudflared/commands.rs`
+#### 1. **Cloudflared Command Module**
+Location: `src-tauri/src/cloudflared/commands.rs`
 
-**Функции**:
-- `check_cloudflared_version()` - Проверка установки cloudflared
-- `start_tcp_tunnel(hostname, port)` - Запуск TCP-туннеля
-- `stop_tcp_tunnel(id)` - Остановка туннеля
+**Functions**:
+- `check_cloudflared_version()` - Check cloudflared installation
+- `start_tcp_tunnel(hostname, port)` - Start TCP tunnel
+- `stop_tcp_tunnel(id)` - Stop tunnel
 
-**Структура ActiveTunnel**:
-- `id` - Идентификатор (формат: "{hostname}-{port}")
-- `hostname` - Удаленный хост
-- `local_port` - Локальный порт прослушивания
-- `pid` - ID процесса
+**ActiveTunnel Structure**:
+- `id` - Identifier (format: "{hostname}-{port}")
+- `hostname` - Remote host
+- `local_port` - Local listening port
+- `pid` - Process ID
 
-#### 2. **TunnelState (Менеджер процессов)**
-Расположение: `src-tauri/src/cloudflared/commands.rs`
+#### 2. **TunnelState (Process Manager)**
+Location: `src-tauri/src/cloudflared/commands.rs`
 
-**Назначение**: Отслеживание активных процессов cloudflared
+**Purpose**: Tracking active cloudflared processes.
 
-**Структура**: HashMap, где ключ - tunnel_id, значение - PID процесса
+**Structure**: HashMap where key is tunnel_id, value is process PID.
 
-**Жизненный цикл**:
-1. `start_tcp_tunnel`: Запуск процесса → Сохранение PID
-2. `stop_tcp_tunnel`: Поиск PID → Завершение процесса → Удаление из map
+**Lifecycle**:
+1. `start_tcp_tunnel`: Start process -> Save PID
+2. `stop_tcp_tunnel`: Find PID -> Terminate process -> Remove from map
 
-### Управление состоянием (Zustand)
+### State Management (Zustand)
 
-Расположение: `src/store.ts`
+Location: `src/store.ts`
 
-**Структура состояния**:
-- `tunnels` - Активные TCP-туннели
-- `services_by_server_by_company` - Иерархия серверов
-- `activeTab` - Текущая вкладка UI
-- `selectedServerId` / `selectedServiceId` - Выбранные элементы
-- `recentConnections` - Недавние подключения
-- `favorites` - Избранное
-- `settings` - Настройки пользователя
+**State Structure**:
+- `tunnels` - Active TCP tunnels
+- `services_by_server_by_company` - Server hierarchy
+- `activeTab` - Current UI tab
+- `selectedServerId` / `selectedServiceId` - Selected items
+- `recentConnections` - Recent connections
+- `favorites` - Favorites
+- `settings` - User settings
 
-**Действия**:
-- Управление туннелями: `startTcpTunnel`, `stopTcpTunnel`
-- Управление серверами: `handleConnectService`, `handleDisconnectService`
-- UI состояние: `setActiveTab`, `toggleFavorite`
+**Actions**:
+- Tunnel management: `startTcpTunnel`, `stopTcpTunnel`
+- Server management: `handleConnectService`, `handleDisconnectService`
+- UI state: `setActiveTab`, `toggleFavorite`
 
-## Поток данных
+## Data Flow
 
-### Установка подключения
+### Establishing Connection
 
 ```
-1. Пользовательский интерфейс
+1. User Interface
    └─> ServerManagement.tsx
        └─> handleToggleConnection()
-           └─> Генерация случайного порта
+           └─> Generate random port
            
-2. Действие Store
+2. Store Action
    └─> startTcpTunnel(hostname, localPort)
        └─> invoke('start_tcp_tunnel', { hostname, localPort })
        
 3. Rust Backend
    └─> start_tcp_tunnel()
-       └─> Запуск cloudflared через Command::spawn()
-       └─> Сохранение PID в TunnelState
-       └─> Возврат ActiveTunnel
+       └─> Start cloudflared via Command::spawn()
+       └─> Save PID to TunnelState
+       └─> Return ActiveTunnel
        
-4. Обновление Frontend
-   └─> Добавление туннеля в state.tunnels[]
-   └─> Обновление UI (показ локального порта)
+4. Frontend Update
+   └─> Add tunnel to state.tunnels[]
+   └─> Update UI (show local port)
 ```
 
-### Завершение подключения
+### Terminating Connection
 
 ```
-1. Пользовательский интерфейс
-   └─> ActiveConnections.tsx или ServerManagement.tsx
+1. User Interface
+   └─> ActiveConnections.tsx or ServerManagement.tsx
        └─> handleStopTunnel(id)
        
-2. Действие Store
+2. Store Action
    └─> stopTcpTunnel(id)
        └─> invoke('stop_tcp_tunnel', { id })
        
 3. Rust Backend
    └─> stop_tcp_tunnel()
-       └─> Поиск PID в TunnelState
-       └─> Завершение процесса (зависит от платформы)
+       └─> Find PID in TunnelState
+       └─> Terminate process (platform dependent)
            - Unix: kill <pid>
            - Windows: taskkill /F /PID <pid>
-       └─> Удаление из TunnelState
+       └─> Remove from TunnelState
        
-4. Обновление Frontend
-   └─> Удаление туннеля из state.tunnels[]
-   └─> Обновление UI
+4. Frontend Update
+   └─> Remove tunnel from state.tunnels[]
+   └─> Update UI
 ```
 
-## Структура файлов
+## File Structure
 
 ```
 desktop-argo-tunnel/
 ├── src/                           # Frontend
 │   ├── components/
 │   │   ├── Dashboard/
-│   │   │   └── Dashboard.tsx      # Главная панель
+│   │   │   └── Dashboard.tsx      # Main dashboard
 │   │   ├── Servers/
-│   │   │   └── ServerManagement.tsx  # Управление серверами
+│   │   │   └── ServerManagement.tsx  # Server management
 │   │   ├── Tunnels/
-│   │   │   └── ActiveConnections.tsx # Список активных туннелей
+│   │   │   └── ActiveConnections.tsx # Active tunnels list
 │   │   ├── Settings/
-│   │   │   └── Settings.tsx       # Настройки приложения
+│   │   │   └── Settings.tsx       # Application settings
 │   │   ├── Navigation/
-│   │   │   ├── Sidebar.tsx        # Главная навигация
+│   │   │   ├── Sidebar.tsx        # Main navigation
 │   │   │   └── NavItem.tsx
-│   │   └── CommandPalette/
-│   │       └── CommandPalette.tsx # Поиск Cmd+K
+│   │   ├── CommandPalette/
+│   │       └── CommandPalette.tsx # Cmd+K search
 │   ├── routes/
-│   │   ├── __root.tsx             # Корневой layout
-│   │   └── index.tsx              # Главный маршрут
+│   │   ├── __root.tsx             # Root layout
+│   │   └── index.tsx              # Main route
 │   ├── i18n/
 │   │   └── locales/
-│   │       ├── en.json            # Английские переводы
-│   │       └── ru.json            # Русские переводы
-│   ├── store.ts                   # Управление состоянием Zustand
-│   └── main.tsx                   # Точка входа
+│   │       ├── en.json            # English translations
+│   │       └── ru.json            # Russian translations
+│   ├── store.ts                   # Zustand state management
+│   └── main.tsx                   # Entry point
 │
 ├── src-tauri/                     # Backend
 │   ├── src/
 │   │   ├── cloudflared/
-│   │   │   ├── mod.rs             # Определение модуля
-│   │   │   └── commands.rs        # Tauri команды
-│   │   ├── lib.rs                 # Главная библиотека
-│   │   └── main.rs                # Точка входа
-│   ├── Cargo.toml                 # Зависимости Rust
-│   └── tauri.conf.json            # Конфигурация Tauri
+│   │   │   ├── mod.rs             # Module definition
+│   │   │   └── commands.rs        # Tauri commands
+│   │   ├── lib.rs                 # Main library
+│   │   └── main.rs                # Entry point
+│   ├── Cargo.toml                 # Rust dependencies
+│   └── tauri.conf.json            # Tauri configuration
 │
 └── docs/
-    ├── ARCHITECTURE.md            # Этот файл
-    └── screenshots/               # Скриншоты UI
+    ├── ARCHITECTURE.md            # This file
+    └── screenshots/               # UI Screenshots
 ```
 
-## Ключевые технологии
+## Key Technologies
 
 ### Frontend
-- **React 18** - UI фреймворк
-- **TypeScript** - Типобезопасность
-- **Zustand** - Управление состоянием
-- **TanStack Router** - Роутинг
-- **i18next** - Интернационализация
-- **Tailwind CSS** - Стилизация
-- **Lucide React** - Иконки
+- **React 18** - UI Framework
+- **TypeScript** - Type Safety
+- **Zustand** - State Management
+- **TanStack Router** - Routing
+- **i18next** - Internationalization
+- **Tailwind CSS** - Styling
+- **Lucide React** - Icons
 
 ### Backend
-- **Rust** - Системный язык программирования
-- **Tauri 2.0** - Десктопный фреймворк
-- **Serde** - Сериализация
-- **Tokio** - Async runtime (неявно через Tauri)
+- **Rust** - Systems Programming Language
+- **Tauri 2.0** - Desktop Framework
+- **Serde** - Serialization
+- **Tokio** - Async runtime (implicitly via Tauri)
 
-### Внешние зависимости
-- **cloudflared** - Бинарник Cloudflare tunnel
-- **OS Process Management** - Нативное управление процессами
+### External Dependencies
+- **cloudflared** - Cloudflare tunnel binary
+- **OS Process Management** - Native process management
 
-## Безопасность
+## Security
 
-1. **Изоляция процессов**: Каждый туннель работает как отдельный процесс `cloudflared`
-2. **Локальное хранилище**: Все данные хранятся локально, без облачной синхронизации
-3. **Хранение учетных данных**: Использует нативное безопасное хранилище ОС (keychain)
-4. **Безопасность IPC**: Защищенный IPC слой Tauri между frontend и backend
-5. **Без повышенных привилегий**: Приложение работает с правами пользователя
+1. **Process Isolation**: Each tunnel runs as a separate `cloudflared` process
+2. **Local Storage**: All data stored locally, no cloud synchronization
+3. **Credential Storage**: Uses native secure OS storage (keychain)
+4. **IPC Security**: Protected Tauri IPC layer between frontend and backend
+5. **No Elevated Privileges**: Application runs with user privileges
 
-## Ограничения и планы развития
+## Limitations and Roadmap
 
-### Текущие ограничения
-1. **Нет персистентности процессов**: Активные туннели теряются при перезапуске приложения
-2. **Только случайный порт**: Нельзя указать кастомный локальный порт
-3. **Нет стриминга логов**: Нельзя просматривать логи cloudflared в реальном времени
-4. **Нет конфигурации туннелей**: Нельзя настраивать ingress правила
+### Current Limitations
+1. **No Process Persistence**: Active tunnels are lost when application restarts
+2. **Random Port Only**: Cannot specify custom local port
+3. **No Log Streaming**: Cannot view cloudflared logs in real-time
+4. **No Tunnel Configuration**: Cannot manage ingress rules
 
-### Планируемые улучшения
-1. **Восстановление процессов**: Обнаружение и переподключение к существующим процессам cloudflared
-2. **Выбор кастомного порта**: Возможность указать локальный порт вручную
-3. **Просмотр логов**: Стриминг и отображение вывода cloudflared
-4. **Редактор конфигурации**: Управление файлами конфигурации туннелей
-5. **Авто-переподключение**: Перезапуск туннелей при сбое
-6. **Метрики туннелей**: Пропускная способность, задержка, количество подключений
+### Planned Improvements
+1. **Process Recovery**: Discovery and reconnection to existing cloudflared processes
+2. **Custom Port Selection**: Ability to manually specify local port
+3. **Log Viewing**: Streaming and display of cloudflared output
+4. **Configuration Editor**: Management of tunnel configuration files
+5. **Auto-Reconnection**: Tunnel restart on failure
+6. **Tunnel Metrics**: Throughput, latency, connection count
 
-## Характеристики производительности
+## Performance Characteristics
 
-- **Время запуска**: ~1-2 секунды (overhead Tauri)
-- **Использование памяти**: ~50-100 МБ (базовое приложение + активные туннели)
-- **Overhead процесса**: ~10-20 МБ на активный туннель (процесс cloudflared)
-- **Диапазон портов**: 10000-60000 (50,000 возможных портов)
-- **Макс. одновременных туннелей**: Ограничено доступными портами и ресурсами системы
+- **Startup Time**: ~1-2 seconds (Tauri overhead)
+- **Memory Usage**: ~50-100 MB (base application + active tunnels)
+- **Process Overhead**: ~10-20 MB per active tunnel (cloudflared process)
+- **Port Range**: 10000-60000 (50,000 possible ports)
+- **Max Concurrent Tunnels**: Limited by available ports and system resources
